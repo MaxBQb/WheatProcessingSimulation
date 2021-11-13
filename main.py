@@ -1,4 +1,8 @@
 import inject
+
+import view.base
+import view.workers
+import view.utils
 from config import make_config, Config
 from database import Database
 import model
@@ -23,6 +27,8 @@ def main():
             for data in cursor:
                 a = table_to_model(cursor.column_names, data, clazz)
                 print(a)
+    view.utils.init_theme()
+    view.workers.WorkersView().run()
 
 
 def configure(binder: inject.Binder):
