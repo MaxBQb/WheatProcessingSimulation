@@ -10,8 +10,7 @@ table_entries = auto_id()
 def get_layout(table_headers: list[str]):
     return [
         [utils.center(
-            sg.Text("Текущее количество:"),
-            sg.Text("0", key=label_entries_count),
+            sg.Text("Текущее количество: 0", key=label_entries_count),
         )],
         [
             [utils.center(sg.Table(

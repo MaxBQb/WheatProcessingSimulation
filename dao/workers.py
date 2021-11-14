@@ -8,3 +8,9 @@ class WorkersDAO(DAO):
             "INNER JOIN role ON worker.RoleId = role.RoleId"
         ) as cursor:
             return list(cursor)
+
+    def get_workers_count(self):
+        with self._db.execute(
+            "SELECT COUNT(*) FROM worker"
+        ) as cursor:
+            return self.single(cursor, 0)

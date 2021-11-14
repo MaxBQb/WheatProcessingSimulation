@@ -4,6 +4,7 @@ import view.base as base
 import view.utils
 from logic.workers import WorkersController
 from view.layout import base_table_layout as layout
+from view.update_handlers import make_text_update_handler
 
 
 class WorkersView(base.BaseInteractiveWindow):
@@ -22,6 +23,11 @@ class WorkersView(base.BaseInteractiveWindow):
             self.controller.get_table(),
             self.update_workers_table,
         )
+        self.observe(
+            layout.label_entries_count,
+            self.controller.get_count(),
+            make_text_update_handler("Текущее количество сотрудников: {}"),
+        )
 
     def update_workers_table(self, table: sg.Table, context: base.Context):
         values = context.value
@@ -30,4 +36,3 @@ class WorkersView(base.BaseInteractiveWindow):
             for row in values
         ]
         table.update(values=values)
-
