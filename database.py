@@ -8,16 +8,25 @@ from contextlib import contextmanager
 class Database:
     config = inject.attr(Config)
 
-    def __init__(self):
-        self._connector = mysql.connector.connect(
-            **self.config.mysql.__dict__
-        )
+    @contextmanager
+    def connect(self):
+        connector = mysql.connector.connect(**self.config.mysql.__dict__)
+        try:
+            yield connector
+        finally:
+            connector.close()
 
     @contextmanager
     def execute(self, query: str, *args):
-        cursor = self._connector.cursor()
-        cursor.execute(query, args)
-        yield cursor
-        cursor.close()
+        with self.connect() as connector:
+            with self.execute_with(connector, query, *args) as cursor:
+                yield cursor
 
-
+    @contextmanager
+    def execute_with(self, connector, query: str, *args):
+        cursor = connector.cursor()
+        try:
+            cursor.execute(query, args)
+            yield cursor
+        finally:
+            cursor.close()

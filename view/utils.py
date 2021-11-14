@@ -1,7 +1,9 @@
 import uuid
+from typing import Generic, TypeVar, Hashable
 
 import PySimpleGUI as sg
 
+from event_system import MutableChannel, Channel
 from view.constants import APP_NAME, INPUT_DEFAULTS
 
 
@@ -73,3 +75,50 @@ def layout_from_fields(fields, base_key="-INPUT-", content_kwargs={}):
 
 def max_len(iterable):
     return len(max(iterable, key=len))
+
+
+T = TypeVar("T")
+
+
+class LiveData(Generic[T]):
+    _EVENT = 'LiveDataEvent'
+
+    def __init__(self, value: T = None):
+        self._channel: MutableChannel[T] = MutableChannel()
+        self._window = None
+        self._value: T = None
+        if value is not None:
+            self.value = value
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value: T):
+        self._value = value
+        self._channel.publish(self._EVENT, value)
+
+    def observe(self,
+                window: sg.Window,
+                channel: Channel,
+                on_update,
+                key: Hashable
+                ):
+        key = (key, self._EVENT)
+
+        def send_on_update(value: T):
+            if window and not window.was_closed():
+                window.write_event_value(key, value)
+
+        channel.subscribe(
+            key,
+            on_update
+        )
+
+        self._channel.subscribe(
+            self._EVENT,
+            send_on_update
+        )
+
+        send_on_update(self.value)

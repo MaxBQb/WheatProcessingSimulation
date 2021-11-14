@@ -1,10 +1,10 @@
-import inject
-
+from . import *
 from dao.workers import WorkersDAO
 
 
 class WorkersRepository:
-    dao = inject.attr(WorkersDAO)
+    _dao = inject.attr(WorkersDAO)
 
+    @live_query(tables.worker, tables.role)
     def get_all_workers(self):
-        return self.dao.get_all_workers()
+        return self._dao.get_all_workers()

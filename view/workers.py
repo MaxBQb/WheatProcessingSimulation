@@ -17,13 +17,17 @@ class WorkersView(base.BaseInteractiveWindow):
 
     def dynamic_build(self):
         super().dynamic_build()
-        table: sg.Table = self.window[layout.table_entries]
-        values = self.controller.get_table()
+        self.observe(
+            layout.table_entries,
+            self.controller.get_table(),
+            self.update_workers_table,
+        )
+
+    def update_workers_table(self, table: sg.Table, context: base.Context):
+        values = context.value
         values = [
             [str(val) for val in row]
             for row in values
         ]
         table.update(values=values)
 
-    def set_handlers(self):
-        super().set_handlers()

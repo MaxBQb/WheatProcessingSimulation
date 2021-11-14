@@ -6,11 +6,13 @@ import view.utils
 from config import make_config, Config
 from database import Database
 import model
+from database_observer import DatabaseObserver
 from mappers import table_to_model
 
 
 def main():
     db = inject.instance(Database)
+    db_observer = inject.instance(DatabaseObserver)
     tables = {
         "contract": model.Contract,
         "legal_entity": model.LegalEntity,
@@ -27,6 +29,7 @@ def main():
             for data in cursor:
                 a = table_to_model(cursor.column_names, data, clazz)
                 print(a)
+    db_observer.run()
     view.utils.init_theme()
     view.workers.WorkersView().run()
 

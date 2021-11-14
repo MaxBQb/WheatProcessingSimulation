@@ -4,12 +4,14 @@ from dataclasses import dataclass
 import jsons
 import yaml
 
+from database_observe_config import DatabaseObserverConfig
 from mysql_config import MySQLConfig
 
 
 @dataclass
 class Config:
     mysql: MySQLConfig = MySQLConfig()
+    database_observer: DatabaseObserverConfig = DatabaseObserverConfig()
 
 
 def make_config(filename: str) -> Config:

@@ -4,7 +4,7 @@ import PySimpleGUI as sg
 from view.layout import EMPTY_LAYOUT
 from typing import Hashable
 from view.constants import BUTTON_DEFAULTS, INPUT_EXTRA_DEFAULTS
-from view.utils import get_title, center
+from view.utils import get_title, center, LiveData
 from event_system import MutableChannel, Channel
 
 T = TypeVar("T")
@@ -142,3 +142,15 @@ class BaseInteractiveWindow(BaseNonBlockingWindow):
         for event, values in self.run_event_loop():
             context = Context(self.window, event, values)
             self._channel.publish(event, context)
+
+    def observe(self, _id: Hashable, livedata: LiveData, func):
+        def on_update(context: Context):
+            element = self.window[_id]
+            func(element, context)
+
+        livedata.observe(
+            self.window,
+            self.channel,
+            on_update,
+            _id
+        )
