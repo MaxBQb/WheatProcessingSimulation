@@ -1,7 +1,7 @@
 import inject
 
 from database_observer import DatabaseObserver
-from view.utils import LiveData
+from view.livedata import LiveData
 
 
 def live_query(*tables: str):

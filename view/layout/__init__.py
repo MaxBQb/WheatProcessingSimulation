@@ -6,5 +6,6 @@ import view.utils as utils
 from view.utils import auto_id
 # noinspection PyUnresolvedReferences
 import view.constants as const
-
+# noinspection PyUnresolvedReferences
+from typing import Hashable
 EMPTY_LAYOUT = [[]]

@@ -13,6 +13,13 @@ class Channel(Generic[T]):
         self._events_map.setdefault(event, [])
         self._events_map[event] += list(callbacks)
 
+    def unsubscribe(self, event: Hashable, *callbacks: Callback):
+        if event not in self._events_map:
+            return
+
+        for callback in callbacks:
+            self._events_map[event].remove(callback)
+
 
 class MutableChannel(Channel[T]):
     _NO_CALLBACKS = tuple()

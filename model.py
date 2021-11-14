@@ -63,7 +63,7 @@ class Machine:
 
 @dataclass
 class Worker:
-    id: int
+    id: int = -1
     chief_id: int = None
     role_id: int = None
     role: str = None

@@ -1,16 +1,17 @@
-import dataclasses
+from dataclasses import dataclass
 from typing import Callable, Any, TypeVar
 import PySimpleGUI as sg
 from view.layout import EMPTY_LAYOUT
 from typing import Hashable
-from view.constants import BUTTON_DEFAULTS, INPUT_EXTRA_DEFAULTS
-from view.utils import get_title, center, LiveData
+from view.utils import get_title, center
+from view.layout import submit_button
+from view.livedata import LiveData
 from event_system import MutableChannel, Channel
 
 T = TypeVar("T")
 
 
-@dataclasses.dataclass
+@dataclass
 class Context:
     window: sg.Window
     event: Hashable
@@ -36,13 +37,11 @@ class BaseNonBlockingWindow:
         self.window: sg.Window = None
         self.layout: list[list] = EMPTY_LAYOUT
         self.dependent_windows: set[BaseNonBlockingWindow] = set()
-        # Applies default input style
-        self._inputs: list[str] = []
 
-    def _add_dependency(self, dependent_window):
+    def _add_dependency(self, dependent_window: 'BaseNonBlockingWindow'):
         self.dependent_windows.add(dependent_window)
 
-    def _open_dependent_window(self, dependent_window):
+    def _open_dependent_window(self, dependent_window: 'BaseNonBlockingWindow'):
         self._add_dependency(dependent_window)
         return dependent_window.run()
 
@@ -77,17 +76,12 @@ class BaseNonBlockingWindow:
                 finalize=True,
                 alpha_channel=0,
                 element_padding=(12, 12),
+                size=(800, 600)
             ) | kwargs),
-            size=(800, 600)
         )
 
     def dynamic_build(self):
         self.setup_window()
-        for key in self._inputs:
-            self.window[key].Widget.config(
-                **INPUT_EXTRA_DEFAULTS
-            )
-        self._inputs = None
         self.window.alpha_channel = 1
 
     def setup_window(self):
@@ -126,6 +120,12 @@ class BaseInteractiveWindow(BaseNonBlockingWindow):
         if not self.window.was_closed():
             self.window.write_event_value(sg.WIN_CLOSED, None)
 
+    def show_error(self, message: str = None):
+        if not message:
+            return
+        self._open_dependent_window(ErrorView(message))
+        return True
+
     def set_handlers(self):
         self.channel.subscribe(
             sg.WIN_CLOSED,
@@ -143,14 +143,48 @@ class BaseInteractiveWindow(BaseNonBlockingWindow):
             context = Context(self.window, event, values)
             self._channel.publish(event, context)
 
-    def observe(self, _id: Hashable, livedata: LiveData, func):
+    def switchable_observe(self, _id: Hashable,
+                           initial_livedata: LiveData,
+                           func):
+        def observe(livedata):
+            return self.observe(_id, livedata, func)
+
+        stop_holder = [observe(initial_livedata)]
+
+        def switch(livedata: LiveData):
+            stop_holder.pop()()
+            stop_holder.append(observe(livedata))
+
+        return switch
+
+    def observe(self, _id: Hashable,
+                livedata: LiveData,
+                func):
         def on_update(context: Context):
             element = self.window[_id]
             func(element, context)
 
-        livedata.observe(
+        return livedata.observe(
             self.window,
             self.channel,
             on_update,
             _id
         )
+
+
+class ErrorView(BaseNonBlockingWindow):
+    title = "Ошибка!"
+
+    def __init__(self, message: str):
+        super().__init__()
+        self._message = message
+
+    def build_layout(self):
+        self.layout = [[
+            sg.Text(self._message)
+        ]] + [submit_button.get_layout(False)]
+
+    def init_window(self, **kwargs):
+        super().init_window(**dict(
+            size=(None, None),
+        ) | kwargs)

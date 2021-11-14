@@ -3,6 +3,7 @@ import inject
 import view.base as base
 import view.utils
 from logic.workers import WorkersController
+from view.add_worker import AddWorkerView
 from view.layout import base_table_layout as layout
 from view.update_handlers import make_text_update_handler
 
@@ -13,8 +14,15 @@ class WorkersView(base.BaseInteractiveWindow):
 
     def build_layout(self):
         self.layout = layout.get_layout([
-            "ФИО", "Должность"
+            "ИО", "Должность"
         ])
+
+    def set_handlers(self):
+        super().set_handlers()
+        self.channel.subscribe(
+            layout.button_add,
+            lambda _: self._open_dependent_window(AddWorkerView())
+        )
 
     def dynamic_build(self):
         super().dynamic_build()
@@ -30,9 +38,8 @@ class WorkersView(base.BaseInteractiveWindow):
         )
 
     def update_workers_table(self, table: sg.Table, context: base.Context):
-        values = context.value
         values = [
             [str(val) for val in row]
-            for row in values
+            for row in context.value
         ]
         table.update(values=values)
