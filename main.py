@@ -1,13 +1,12 @@
 import inject
 
-import view.base
-import view.workers
-import view.utils
+import model
 from config import make_config, Config
 from database import Database
-import model
 from database_observer import DatabaseObserver
 from mappers import table_to_model
+from view.main_menu import MainMenuView
+from view.utils import init_theme
 
 
 def main():
@@ -30,8 +29,8 @@ def main():
                 a = table_to_model(cursor.column_names, data, clazz)
                 print(a)
     db_observer.run()
-    view.utils.init_theme()
-    view.workers.WorkersView().run()
+    init_theme()
+    MainMenuView().run()
 
 
 def configure(binder: inject.Binder):

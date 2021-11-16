@@ -16,10 +16,10 @@ def inputElem(key: Hashable):
     return sg.Input(**const.INPUT_DEFAULTS, key=key, enable_events=True)
 
 
-def button(text: str, key: Hashable, background=None, visible=True):
+def button(text: str, key: Hashable, color=None, visible=True, **kwargs):
     return sg.pin(sg.Button(
         button_text=text,
-        button_color=background,
+        button_color=color,
         **const.BUTTON_DEFAULTS,
         visible=visible,
         key=key,
