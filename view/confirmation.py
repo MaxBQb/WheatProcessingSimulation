@@ -23,7 +23,7 @@ class ConfirmDialogView(base.BaseInteractiveWindow):
 
     def setup_window(self):
         super().setup_window()
-        self.window.set_min_size((280, 120))
+        self.window.set_min_size((400, 120))
 
     def set_handlers(self):
         super().set_handlers()

@@ -2,20 +2,26 @@ from dao.base import DAO
 from typing import TypeVar, Generic
 from abc import ABC, abstractmethod
 
+import dao.live_query
+
+live_query = dao.live_query.live_query()
 
 T = TypeVar('T')
 
 
-class ItemsDAO(DAO, Generic[T], ABC):
+class ItemsDAO(ABC, Generic[T], DAO):
 
+    @live_query
     @abstractmethod
     def get_all(self) -> list:
         pass
 
+    @live_query
     @abstractmethod
     def get_item(self, _id: int) -> T:
         pass
 
+    @live_query
     @abstractmethod
     def get_count(self) -> int:
         pass

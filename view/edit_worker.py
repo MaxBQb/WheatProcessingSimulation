@@ -6,29 +6,28 @@ import view.utils as utils
 from logic.workers import WorkersController
 from model import Worker
 from view.add_worker import AddWorkerView
+from view.edit_item import EditItemView
 from view.layout import worker_layout as layout
 
 
-class EditWorkerView(AddWorkerView):
+class EditWorkerView(EditItemView[Worker], AddWorkerView):
     title = utils.get_title("Изменение данных сотрудника")
     controller = inject.attr(WorkersController)
 
     def __init__(self, _id: int):
-        super().__init__()
-        self.worker = self.controller.get_worker(_id).value
-        self.worker_original = Worker(**self.worker.__dict__)
+        super().__init__(_id)
         self.__role_loaded = False
         self.__chief_candidates_loaded = False
 
     def dynamic_build(self):
         super().dynamic_build()
-        self.window[layout.input_name].update(self.worker.name)
+        self.window[layout.input_name].update(self.item.name)
 
     def update_roles_list(self, element: sg.Listbox,
                           context: base.Context):
         super().update_roles_list(element, context)
         if not self.__role_loaded:
-            pos = list(self.roles.column(0)).index(self.worker.role_id)
+            pos = list(self.roles.column(0)).index(self.item.role_id)
             element.update(set_to_index=pos, scroll_to_index=pos)
             self.__role_loaded = True
 
@@ -37,14 +36,9 @@ class EditWorkerView(AddWorkerView):
                                      context: base.Context):
         super().update_chief_candidates_list(element, context)
         if not self.__chief_candidates_loaded:
-            if self.worker.chief_id is None:
+            if self.item.chief_id is None:
                 pos = 0
             else:
-                pos = list(self.workers.column(0)).index(self.worker.chief_id)+1
+                pos = list(self.workers.column(0)).index(self.item.chief_id) + 1
             element.update(set_to_index=pos, scroll_to_index=pos)
             self.__role_loaded = True
-
-    def send_worker(self, worker: Worker):
-        if self.worker_original == worker:
-            return
-        return self.controller.update_worker(worker)

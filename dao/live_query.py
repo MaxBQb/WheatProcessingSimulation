@@ -1,16 +1,19 @@
+from typing import TypeVar, Callable
+
 import inject
 
 from database_observer import DatabaseObserver
 from view.livedata import LiveData
 
+T = TypeVar("T")
 
 tables = DatabaseObserver.Event
 
 
 def live_query(*tables: str):
-    def _live_query(func):
+    def _live_query(func: Callable[..., T]):
         def wrapper(*args, **kwargs):
-            livedata = LiveData()
+            livedata: LiveData[T] = LiveData()
             db_observer = inject.instance(DatabaseObserver)
 
             def on_update(_):

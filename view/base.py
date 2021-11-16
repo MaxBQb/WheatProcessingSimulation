@@ -177,6 +177,14 @@ class BaseInteractiveWindow(BaseNonBlockingWindow):
         )
 
 
+def transition(func: Callable[..., BaseNonBlockingWindow]):
+    def _transition(self: BaseInteractiveWindow, *args, **kwargs):
+        return self._open_dependent_window(
+            func(self, *args, **kwargs)
+        )
+    return _transition
+
+
 class ErrorView(BaseNonBlockingWindow):
     title = "Ошибка!"
 
