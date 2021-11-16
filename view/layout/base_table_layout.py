@@ -2,6 +2,8 @@ from .common import *
 
 
 # ID's
+from .styles import BUTTON_SUCCESS, BUTTON_ATTENTION, BUTTON_NEW
+
 label_entries_count = auto_id()
 table_entries = auto_id()
 button_add = auto_id()
@@ -29,9 +31,9 @@ def get_layout(table_headers: list[str]):
         ],
         [
             [utils.center(
-                button('Добавить', button_add, "Green"),
-                button('Изменить', button_edit, "DarkGreen", False),
-                button('Удалить', button_delete, "DarkRed", False),
+                button('Добавить', button_add, **BUTTON_NEW),
+                button('Изменить', button_edit, **BUTTON_SUCCESS),
+                button('Удалить', button_delete, **BUTTON_ATTENTION),
             )]
         ],
     ]

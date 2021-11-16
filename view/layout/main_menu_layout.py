@@ -31,8 +31,8 @@ def get_layout():
             sg.Column([
                 [button('Производство', button_production_lines)],
                 [button('Стандарты производства', button_standards)],
+                [button('Юридические лица', button_legal_entities)],
                 [button('Договора', button_contracts)],
-                [button('Юр. лица', button_legal_entities)],
             ], element_justification='center'),
             sg.Column([
                 [button('Ресурсы', button_resources)],

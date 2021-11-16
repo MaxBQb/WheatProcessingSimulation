@@ -1,4 +1,5 @@
 from . import *
+from .styles import BUTTON_NORMAL
 
 
 def configure_inputs(window: sg.Window, *keys: str):
@@ -16,12 +17,10 @@ def inputElem(key: Hashable):
     return sg.Input(**const.INPUT_DEFAULTS, key=key, enable_events=True)
 
 
-def button(text: str, key: Hashable, color=None, visible=True, **kwargs):
+def button(text: str, key: Hashable, **kwargs):
     return sg.pin(sg.Button(
         button_text=text,
-        button_color=color,
-        **const.BUTTON_DEFAULTS,
-        visible=visible,
+        **(BUTTON_NORMAL | kwargs),
         key=key,
     ))
 

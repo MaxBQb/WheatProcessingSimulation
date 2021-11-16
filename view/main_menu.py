@@ -1,5 +1,3 @@
-
-import PySimpleGUI as sg
 import view.base as base
 from view.layout import main_menu_layout as layout
 from view.workers import WorkersView
