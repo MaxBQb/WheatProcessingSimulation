@@ -6,6 +6,7 @@ label_entries_count = auto_id()
 table_entries = auto_id()
 button_add = auto_id()
 button_edit = auto_id()
+button_delete = auto_id()
 
 
 def get_layout(table_headers: list[str]):
@@ -30,6 +31,7 @@ def get_layout(table_headers: list[str]):
             [utils.center(
                 button('Добавить', button_add, "Green"),
                 button('Изменить', button_edit, "DarkGreen", False),
+                button('Удалить', button_delete, "DarkRed", False),
             )]
         ],
     ]

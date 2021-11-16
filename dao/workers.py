@@ -1,3 +1,5 @@
+from mysql.connector import Error
+
 from dao.base import DAO
 from mappers import table_to_model
 from model import Worker
@@ -36,20 +38,29 @@ class WorkersDAO(DAO):
         ) as cursor:
             return self.single(cursor, 0)
 
+    @DAO.check_success
     def add_worker(self, worker: Worker):
         with self._db.execute(
             "insert into worker (ChiefId, RoleId, WorkerName) "
             "values (%s, %s, %s)",
             worker.chief_id, worker.role_id, worker.name,
-            commit=True,
+            commit_changes=True,
         ) as cursor:
             return cursor.lastrowid
 
+    @DAO.check_success
     def update_worker(self, worker: Worker):
         with self._db.execute(
             "update worker set ChiefId=%s, RoleId=%s, WorkerName=%s "
             "where WorkerId=%s",
             worker.chief_id, worker.role_id, worker.name, worker.id,
-            commit=True,
-        ):
-            return True
+            commit_changes=True,
+        ) as cursor:
+            return cursor.lastrowid
+
+    @DAO.check_success
+    def delete_workers(self, *ids: int):
+        query = "delete from worker where WorkerId = %s"
+        with self._db.cursor(True) as cursor:
+            for _id in ids:
+                cursor.execute(query, (_id, ))

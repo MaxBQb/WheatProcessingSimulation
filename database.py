@@ -9,7 +9,7 @@ class Database:
     config = inject.attr(Config)
 
     @contextmanager
-    def connect(self, commit=False):
+    def connect(self):
         connector = mysql.connector.connect(**self.config.mysql.__dict__)
         try:
             yield connector
@@ -17,20 +17,18 @@ class Database:
             connector.close()
 
     @contextmanager
-    def execute(self, query: str, *args, commit=False):
+    def cursor(self, commit_changes=False):
         with self.connect() as connector:
-            with self.execute_with(connector, query, *args, commit=commit) as cursor:
+            cursor = connector.cursor()
+            try:
                 yield cursor
+                if commit_changes:
+                    connector.commit()
+            finally:
+                cursor.close()
 
     @contextmanager
-    def execute_with(self, connector,
-                     query: str, *args,
-                     commit=False):
-        cursor = connector.cursor()
-        try:
+    def execute(self, query: str, *args, commit_changes=False):
+        with self.cursor(commit_changes) as cursor:
             cursor.execute(query, args)
             yield cursor
-            if commit:
-                connector.commit()
-        finally:
-            cursor.close()

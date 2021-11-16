@@ -82,7 +82,6 @@ class BaseNonBlockingWindow:
                 finalize=True,
                 alpha_channel=0,
                 element_padding=(12, 12),
-                size=(800, 600)
             ) | kwargs),
         )
 
@@ -187,10 +186,9 @@ class ErrorView(BaseNonBlockingWindow):
 
     def build_layout(self):
         self.layout = [[
-            sg.Text(self._message)
+            center(sg.Text(self._message))
         ]] + [submit_button.get_layout(False)]
 
-    def init_window(self, **kwargs):
-        super().init_window(**dict(
-            size=(None, None),
-        ) | kwargs)
+    def setup_window(self):
+        super().setup_window()
+        self.window.set_min_size((280, 120))

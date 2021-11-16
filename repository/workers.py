@@ -27,3 +27,6 @@ class WorkersRepository:
 
     def update_worker(self, worker: Worker):
         return self._dao.update_worker(worker)
+
+    def delete_workers(self, *ids: int):
+        return self._dao.delete_workers(*ids)

@@ -49,4 +49,8 @@ class WorkersController:
         if error:
             return error
         if not self.source.update_worker(worker):
-            return "Неизвестная ошибка"
+            return "Не удалось обновить данные"
+
+    def delete_workers(self, *ids: int):
+        if not self.source.delete_workers(*ids):
+            return "Удаление не удалось"
