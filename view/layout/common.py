@@ -16,13 +16,14 @@ def inputElem(key: Hashable):
     return sg.Input(**const.INPUT_DEFAULTS, key=key, enable_events=True)
 
 
-def button(text: str, key: Hashable, background=None):
-    return sg.Button(
+def button(text: str, key: Hashable, background=None, visible=True):
+    return sg.pin(sg.Button(
         button_text=text,
         button_color=background,
         **const.BUTTON_DEFAULTS,
+        visible=visible,
         key=key,
-    )
+    ))
 
 
 def choice_list(key: Hashable,

@@ -18,5 +18,12 @@ class WorkersRepository:
     def get_workers_count(self):
         return self._dao.get_workers_count()
 
+    @live_query(tables.worker, tables.role)
+    def get_worker(self, _id):
+        return self._dao.get_worker(_id)
+
     def add_worker(self, worker: Worker):
         return self._dao.add_worker(worker)
+
+    def update_worker(self, worker: Worker):
+        return self._dao.update_worker(worker)

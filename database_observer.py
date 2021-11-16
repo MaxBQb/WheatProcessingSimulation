@@ -45,6 +45,6 @@ class DatabaseObserver:
 
     def _poll_db(self):
         while True:
-            for event in self.source.get_changes(self.config.database_observer.refresh_interval):
+            for event in self.source.get_changes(self.config.database_observer.check_interval):
                 self._channel.publish(event, None)
             sleep(self.config.database_observer.refresh_interval)

@@ -30,6 +30,12 @@ class Context:
         return self.window[self.event]
 
 
+def with_element(func):
+    def wrapper(context: Context):
+        return func(context.element, context)
+    return wrapper
+
+
 class BaseNonBlockingWindow:
     title = get_title("base non-blocking window")
 

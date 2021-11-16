@@ -7,7 +7,7 @@ from logic.workers import WorkersController
 from model import Worker
 from view.layout import worker_layout as layout
 from view.layout import submit_button
-from view.update_handlers import update_listbox, restrict_length
+from view.update_handlers import update_listbox, restrict_length, make_text_update_handler
 
 
 class AddWorkerView(base.BaseInteractiveWindow):
@@ -16,7 +16,7 @@ class AddWorkerView(base.BaseInteractiveWindow):
 
     def __init__(self):
         super().__init__()
-        self.worker = Worker(-1)
+        self.worker = Worker()
         self.roles = dict()
         self.workers = dict()
         self.chief_list_updater = None
@@ -41,7 +41,10 @@ class AddWorkerView(base.BaseInteractiveWindow):
         )
         self.channel.subscribe(
             layout.input_name,
-            restrict_length(self.controller.name_max_len)
+            restrict_length(self.controller.name_max_len),
+            base.with_element(
+                make_text_update_handler(lambda x: x.title())
+            )
         )
 
     def dynamic_build(self):

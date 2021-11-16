@@ -34,9 +34,19 @@ class WorkersController:
         if not worker.role_id:
             return "Не указана должность"
 
+    def get_worker(self, _id: int):
+        return self.source.get_worker(_id)
+
     def add_worker(self, worker: Worker):
         error = self.validate(worker)
         if error:
             return error
         if not self.source.add_worker(worker):
+            return "Неизвестная ошибка"
+
+    def update_worker(self, worker: Worker):
+        error = self.validate(worker)
+        if error:
+            return error
+        if not self.source.update_worker(worker):
             return "Неизвестная ошибка"

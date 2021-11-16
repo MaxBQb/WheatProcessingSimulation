@@ -14,7 +14,7 @@ class ChangesRepository:
         new_state = dict(new_state)
         diff = {
             k for k, v in new_state.items()
-            if self._current_state.get(k, -7) != v
+            if self._current_state.get(k, "New Value") != v
         }
         self._current_state |= new_state
         return diff

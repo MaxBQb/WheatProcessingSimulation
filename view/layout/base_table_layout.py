@@ -5,6 +5,7 @@ from .common import *
 label_entries_count = auto_id()
 table_entries = auto_id()
 button_add = auto_id()
+button_edit = auto_id()
 
 
 def get_layout(table_headers: list[str]):
@@ -21,12 +22,14 @@ def get_layout(table_headers: list[str]):
                 justification='center',
                 hide_vertical_scroll=True,
                 expand_x=True,
+                enable_events=True,
                 key=table_entries,
             ), expand_x=True)]
         ],
         [
             [utils.center(
                 button('Добавить', button_add, "Green"),
+                button('Изменить', button_edit, "DarkGreen", False),
             )]
         ],
     ]

@@ -22,6 +22,7 @@ def _field_name(base_name: str, clazz: type):
             else x
         ),
         lambda x: class_name + '_' + x,
+        lambda x: x.removeprefix(class_name+'_').removesuffix('_name')
     )
     for modifier in modifiers:
         base_name = modifier(base_name)
