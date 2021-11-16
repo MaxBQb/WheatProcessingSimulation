@@ -15,6 +15,8 @@ class WorkersView(ItemsView[Worker]):
 
     LABEL_CURRENT_COUNT = "Текущее количество сотрудников: {}"
 
+    TABLE_HEADERS = ["ИО", "Должность"]
+
     @base.transition
     def open_add_item_view(self):
         return AddWorkerView()

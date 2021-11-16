@@ -2,49 +2,49 @@ from dao.base import DAO
 from dao.items import ItemsDAO
 import dao.live_query
 from mappers import table_to_model
-from model import Role
+from model import GrindingGrade
 
 
-live_query = dao.live_query.live_query(dao.live_query.tables.role)
+live_query = dao.live_query.live_query(dao.live_query.tables.grinding_grade)
 
 
-class RolesDAO(ItemsDAO[Role]):
+class GrindingGradesDAO(ItemsDAO[GrindingGrade]):
     @live_query
     def get_all(self):
         with self._db.execute(
-            "SELECT * FROM role"
+            "SELECT * FROM grinding_grade"
         ) as cursor:
             return list(cursor)
 
     @live_query
-    def get_item(self, _id: int) -> Role:
+    def get_item(self, _id: int) -> GrindingGrade:
         with self._db.execute(
-            "SELECT * FROM role "
-            "WHERE RoleId = %s", _id
+            "SELECT * FROM grinding_grade "
+            "WHERE GrindingGradeId = %s", _id
         ) as cursor:
-            return table_to_model(cursor.column_names, next(cursor, None), Role)
+            return table_to_model(cursor.column_names, next(cursor, None), GrindingGrade)
 
     @live_query
     def get_count(self) -> int:
         with self._db.execute(
-            "SELECT COUNT(*) FROM role"
+            "SELECT COUNT(*) FROM grinding_grade"
         ) as cursor:
             return self.single(cursor, 0)
 
     @DAO.check_success
-    def add_item(self, item: Role) -> int:
+    def add_item(self, item: GrindingGrade) -> int:
         with self._db.execute(
-            "insert into role (RoleName) "
+            "insert into grinding_grade (GrindingGradeName) "
             "values (%s)", item.name,
             commit_changes=True,
         ) as cursor:
             return cursor.lastrowid
 
     @DAO.check_success
-    def update_item(self, item: Role):
+    def update_item(self, item: GrindingGrade):
         with self._db.execute(
-                "update role set RoleName=%s "
-                "where RoleId=%s",
+                "update grinding_grade set GrindingGradeName=%s "
+                "where GrindingGradeId=%s",
                 item.name, item.id,
                 commit_changes=True,
         ) as cursor:
@@ -52,6 +52,6 @@ class RolesDAO(ItemsDAO[Role]):
 
     def _delete_item(self, cursor, _id: int):
         cursor.execute(
-            "delete from role where RoleId = %s",
+            "delete from grinding_grade where GrindingGradeId = %s",
             (_id,)
         )

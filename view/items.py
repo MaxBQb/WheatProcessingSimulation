@@ -17,10 +17,10 @@ class ItemsView(ABC, Generic[T], base.BaseInteractiveWindow):
 
     LABEL_CURRENT_COUNT = "Текущее количество: {}"
 
+    TABLE_HEADERS = ["Пусто"]
+
     def build_layout(self):
-        self.layout = layout.get_layout([
-            "ИО", "Должность"
-        ])
+        self.layout = layout.get_layout(self.TABLE_HEADERS)
 
     def set_handlers(self):
         super().set_handlers()

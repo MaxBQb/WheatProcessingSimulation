@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import NewType
 
 
 @dataclass
@@ -68,3 +69,25 @@ class Worker:
     role_id: int = None
     role: str = None
     name: str = None
+
+
+@dataclass
+class _Primitive:
+    id: int = -1
+    name: str = None
+
+
+class Role(_Primitive):
+    pass
+
+
+class MachineType(_Primitive):
+    pass
+
+
+class FlourGrade(_Primitive):
+    pass
+
+
+class GrindingGrade(_Primitive):
+    pass

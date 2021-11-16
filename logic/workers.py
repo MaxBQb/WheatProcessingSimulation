@@ -1,15 +1,15 @@
 import inject
 
-from dao.roles import RolesDAO
 from dao.workers import WorkersDAO
 from logic.items import ItemsController
+from logic.roles import RolesController
 from logic.table import Table
 from model import Worker
 
 
 class WorkersController(ItemsController[Worker]):
     source = inject.attr(WorkersDAO)
-    roles_source = inject.attr(RolesDAO)
+    roles_controller = inject.attr(RolesController)
 
     name_max_len = 60
     name_min_len = 2
@@ -25,7 +25,7 @@ class WorkersController(ItemsController[Worker]):
         )
 
     def get_roles(self):
-        return self.roles_source.get_roles().map(Table)
+        return self.roles_controller.get_all().map(Table)
 
     def validate(self, item: Worker):
         if not item.name or len(item.name) < self.name_min_len:
