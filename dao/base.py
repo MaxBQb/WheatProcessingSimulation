@@ -1,3 +1,5 @@
+from typing import Callable, Any, Union
+
 import inject
 from mysql.connector import Error
 
@@ -12,7 +14,7 @@ class DAO:
         return next(cursor, (default,))[0]
 
     @staticmethod
-    def check_success(func):
+    def check_success(func) -> Callable[..., Union[bool, Any]]:
         def wrapper(*args, **kwargs):
             try:
                 return func(*args, **kwargs) or True

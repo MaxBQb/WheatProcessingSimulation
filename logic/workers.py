@@ -1,19 +1,19 @@
 import inject
 
+from dao.roles import RolesDAO
+from dao.workers import WorkersDAO
 from model import Worker
-from repository.roles import RolesRepository
-from repository.workers import WorkersRepository
 
 
 class WorkersController:
-    source = inject.attr(WorkersRepository)
-    roles_source = inject.attr(RolesRepository)
+    source = inject.attr(WorkersDAO)
+    roles_source = inject.attr(RolesDAO)
 
     name_max_len = 60
     name_min_len = 2
 
-    def get_table(self):
-        return self.source.get_all_workers()
+    def get_all(self):
+        return self.source.get_all()
 
     def get_chief_candidates(self, worker: Worker):
         return self.source.get_chief_candidates(worker)\
@@ -22,7 +22,7 @@ class WorkersController:
                         for _id, name, role in data])
 
     def get_count(self):
-        return self.source.get_workers_count()
+        return self.source.get_count()
 
     def get_roles(self):
         return self.roles_source.get_roles()
@@ -35,22 +35,22 @@ class WorkersController:
             return "Не указана должность"
 
     def get_worker(self, _id: int):
-        return self.source.get_worker(_id)
+        return self.source.get_item(_id)
 
     def add_worker(self, worker: Worker):
         error = self.validate(worker)
         if error:
             return error
-        if not self.source.add_worker(worker):
+        if not self.source.add_item(worker):
             return "Неизвестная ошибка"
 
     def update_worker(self, worker: Worker):
         error = self.validate(worker)
         if error:
             return error
-        if not self.source.update_worker(worker):
+        if not self.source.update_item(worker):
             return "Не удалось обновить данные"
 
     def delete_workers(self, *ids: int):
-        if not self.source.delete_workers(*ids):
+        if not self.source.delete_items(*ids):
             return "Удаление не удалось"

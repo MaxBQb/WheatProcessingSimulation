@@ -4,12 +4,12 @@ from time import sleep
 import inject
 
 from config import Config
+from dao.changes import ChangesDAO
 from event_system import MutableChannel, Channel
-from repository.changes import ChangesRepository
 
 
 class DatabaseObserver:
-    source = inject.attr(ChangesRepository)
+    source = inject.attr(ChangesDAO)
     config = inject.attr(Config)
 
     class Event:
@@ -30,6 +30,7 @@ class DatabaseObserver:
 
     def __init__(self):
         self._channel: MutableChannel[None] = MutableChannel()
+        self._current_state = {}
         self._thread = Thread(
             name="DatabasePolling",
             target=self._poll_db,
@@ -45,6 +46,16 @@ class DatabaseObserver:
 
     def _poll_db(self):
         while True:
-            for event in self.source.get_changes(self.config.database_observer.check_interval):
+            for event in self._get_changes():
                 self._channel.publish(event, None)
             sleep(self.config.database_observer.refresh_interval)
+
+    def _get_changes(self):
+        new_state = self.source.get_all_changes(self.config.database_observer.check_interval)
+        new_state = dict(new_state)
+        diff = {
+            k for k, v in new_state.items()
+            if self._current_state.get(k, "New Value") != v
+        }
+        self._current_state |= new_state
+        return diff

@@ -4,6 +4,9 @@ from database_observer import DatabaseObserver
 from view.livedata import LiveData
 
 
+tables = DatabaseObserver.Event
+
+
 def live_query(*tables: str):
     def _live_query(func):
         def wrapper(*args, **kwargs):

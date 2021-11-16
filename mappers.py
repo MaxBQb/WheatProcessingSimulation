@@ -31,6 +31,8 @@ def _field_name(base_name: str, clazz: type):
 
 
 def table_to_model(keys: Iterable, values: Iterable, clazz: type):
+    if not keys or not values or not clazz:
+        return None
     return clazz(**{
         _field_name(key, clazz): value
         for key, value in zip(keys, values)

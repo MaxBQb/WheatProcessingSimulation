@@ -48,7 +48,7 @@ class WorkersView(base.BaseInteractiveWindow):
         super().dynamic_build()
         self.observe(
             layout.table_entries,
-            self.controller.get_table(),
+            self.controller.get_all(),
             self.update_workers_table,
         )
         self.observe(
