@@ -76,8 +76,8 @@ def max_len(iterable):
     return len(max(iterable, key=len))
 
 
-def get_listbox_value(values: dict, key: Hashable):
-    return next(iter(values.get(key) or []), None)
+def first(array, default=None):
+    return next(iter(array), default)
 
 
 def configure(*elements, **kwargs):

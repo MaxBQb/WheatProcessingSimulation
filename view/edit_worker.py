@@ -28,7 +28,7 @@ class EditWorkerView(AddWorkerView):
                           context: base.Context):
         super().update_roles_list(element, context)
         if not self.__role_loaded:
-            pos = list(self.roles.values()).index(self.worker.role_id)
+            pos = list(self.roles.column(0)).index(self.worker.role_id)
             element.update(set_to_index=pos, scroll_to_index=pos)
             self.__role_loaded = True
 
@@ -40,7 +40,7 @@ class EditWorkerView(AddWorkerView):
             if self.worker.chief_id is None:
                 pos = 0
             else:
-                pos = list(self.workers.values()).index(self.worker.chief_id)+1
+                pos = list(self.workers.column(0)).index(self.worker.chief_id)+1
             element.update(set_to_index=pos, scroll_to_index=pos)
             self.__role_loaded = True
 

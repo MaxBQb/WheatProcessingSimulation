@@ -2,7 +2,7 @@ import PySimpleGUI as sg
 import inject
 import view.base as base
 import view.utils as utils
-from logic.common import swapped_dict
+from logic.table import Table
 from logic.workers import WorkersController
 from model import Worker
 from view.layout import worker_layout as layout
@@ -17,8 +17,8 @@ class AddWorkerView(base.BaseInteractiveWindow):
     def __init__(self):
         super().__init__()
         self.worker = Worker()
-        self.roles = dict()
-        self.workers = dict()
+        self.roles = Table()
+        self.workers = Table()
         self.chief_list_updater = None
 
     def build_layout(self):
@@ -62,27 +62,30 @@ class AddWorkerView(base.BaseInteractiveWindow):
         )
 
     def on_role_selected(self, context: base.Context):
-        self.worker.role_id = self.roles.get(
-            utils.get_listbox_value(context.values, context.event)
-        )
+        self.worker.role_id = self.roles.cell(0, utils.first(context.element.get_indexes()), None)
         self.chief_list_updater(self.controller.get_chief_candidates(self.worker))
 
     def update_roles_list(self, element: sg.Listbox,
                           context: base.Context):
-        self.roles = swapped_dict(context.value)
-        update_listbox(element, self.roles)
+        self.roles: Table = context.value
+        update_listbox(element, list(self.roles.column(1)))
 
     def update_chief_candidates_list(self,
                                      element: sg.Listbox,
                                      context: base.Context):
-        self.workers = swapped_dict(context.value)
-        update_listbox(element, ["Нет"] + list(self.workers.keys()))
+        self.workers: Table = context.value
+        update_listbox(element, list(self.workers.column(1)))
 
     def on_submit(self, context: base.Context):
         worker, values = self.worker, context.values
         worker.name = values.get(layout.input_name)
-        worker.role_id = self.roles.get(utils.get_listbox_value(values, layout.choice_list_role))
-        worker.chief_id = self.workers.get(utils.get_listbox_value(values, layout.choice_list_chief))
+
+        row = utils.first(self.window[layout.choice_list_role].get_indexes(), None)
+        worker.role_id = self.roles.cell(0, row, None)
+
+        row = utils.first(self.window[layout.choice_list_chief].get_indexes(), 0)
+        worker.chief_id = self.workers.cell(0, row)
+
         if self.show_error(self.send_worker(worker)):
             return
         self.close()

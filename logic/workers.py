@@ -2,6 +2,7 @@ import inject
 
 from dao.roles import RolesDAO
 from dao.workers import WorkersDAO
+from logic.table import Table
 from model import Worker
 
 
@@ -16,16 +17,20 @@ class WorkersController:
         return self.source.get_all()
 
     def get_chief_candidates(self, worker: Worker):
-        return self.source.get_chief_candidates(worker)\
-                   .map(lambda data: [
-                        (_id, f"{name}, {role}")
-                        for _id, name, role in data])
+        return (
+            self.source
+            .get_chief_candidates(worker)
+            .map(lambda data: Table(
+                [(None, "Нет")] +
+                [(_id, f"{name}, {role}")
+                 for _id, name, role in data]))
+        )
 
     def get_count(self):
         return self.source.get_count()
 
     def get_roles(self):
-        return self.roles_source.get_roles()
+        return self.roles_source.get_roles().map(Table)
 
     def validate(self, worker: Worker):
         if not worker.name or len(worker.name) < self.name_min_len:
