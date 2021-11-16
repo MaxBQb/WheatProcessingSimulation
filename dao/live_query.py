@@ -10,7 +10,7 @@ T = TypeVar("T")
 tables = DatabaseObserver.Event
 
 
-def live_query(*tables: str):
+def live_query(*table_names: str):
     def _live_query(func: Callable[..., T]):
         def wrapper(*args, **kwargs):
             livedata: LiveData[T] = LiveData()
@@ -19,7 +19,7 @@ def live_query(*tables: str):
             def on_update(_):
                 livedata.value = func(*args, **kwargs)
 
-            for table in tables:
+            for table in table_names:
                 db_observer.channel.subscribe(
                     table, on_update
                 )

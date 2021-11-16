@@ -24,7 +24,7 @@ def update_listbox(element: sg.Listbox, values: list):
     element.set_size((max_len(values)+1, element.Size[1]))
 
 
-def restrict_length(max_len: int):
+def restrict_length(limit: int):
     return with_element(make_text_update_handler(
-        lambda x: x[:max_len]
+        lambda x: x[:limit]
     ))

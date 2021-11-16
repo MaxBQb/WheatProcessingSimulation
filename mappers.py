@@ -1,12 +1,10 @@
 import re
 from typing import Iterable
 
-_pascal_case_pattern = re.compile('(.)([A-Z][a-z]+)')
 _camel_case_pattern = re.compile('([a-z0-9])([A-Z])')
 
 
 def _to_snake_case(text):
-    name = _pascal_case_pattern.sub(r'\1_\2', text)
     return _camel_case_pattern.sub(r'\1_\2', text).lower()
 
 

@@ -15,6 +15,7 @@ class Config:
 
 
 def make_config(filename: str) -> Config:
+    # noinspection PyUnusedLocal
     config = None
     with suppress(FileNotFoundError, jsons.DecodeError):
         config = load_config(filename)
