@@ -4,9 +4,8 @@ import view.base as base
 import view.utils
 from logic.roles import RolesController
 from model import Role
-from view.add_role import AddRoleView
-from view.edit_role import EditRoleView
-from view.primitives import PrimitivesView
+from view import utils as utils
+from view.primitives import PrimitivesView, AddPrimitiveView, EditPrimitiveView
 
 
 class RolesView(PrimitivesView[Role]):
@@ -23,3 +22,16 @@ class RolesView(PrimitivesView[Role]):
     def open_edit_item_view(self, _id: int):
         return EditRoleView(_id)
 
+
+class AddRoleView(AddPrimitiveView[Role]):
+    title = utils.get_title("Создание новой должности")
+    controller = inject.attr(RolesController)
+
+    def __init__(self):
+        super().__init__()
+        self.item = Role()
+
+
+class EditRoleView(EditPrimitiveView[Role], AddRoleView):
+    title = utils.get_title("Изменение названия должности")
+    controller = inject.attr(RolesController)

@@ -1,13 +1,16 @@
 from abc import ABC, abstractmethod
+from copy import deepcopy
 from typing import TypeVar, Generic
 
 import PySimpleGUI as sg
 
 import view.base as base
 from logic.items import ItemsController
+from view import base as base
 from view.confirmation import ConfirmDialogView
-from view.layout import base_table_layout as layout
+from view.layout import base_table_layout as layout, submit_button
 from view.update_handlers import make_text_update_handler
+
 
 T = TypeVar('T')
 
@@ -114,3 +117,48 @@ class ItemsView(ABC, Generic[T], base.BaseInteractiveWindow):
         self.window[layout.button_edit].update(
             visible=len(context.value) == 1
         )
+
+
+class AddItemView(ABC, Generic[T], base.BaseInteractiveWindow):
+    controller: ItemsController[T]
+
+    def __init__(self):
+        super().__init__()
+        self.item: T
+
+    def build_layout(self):
+        self.layout += [submit_button.get_layout()]
+
+    def set_handlers(self):
+        super().set_handlers()
+        self.channel.subscribe(
+            submit_button.button_submit,
+            self.on_submit
+        )
+
+    @abstractmethod
+    def build_item(self, context: base.Context) -> T:
+        pass
+
+    def on_submit(self, context: base.Context):
+        item = self.build_item(context)
+        result = self.controller.add_item(item)
+        if self.show_error(result):
+            return
+        self.close()
+
+
+class EditItemView(Generic[T], AddItemView[T], ABC):
+    def __init__(self, _id: int):
+        super().__init__()
+        self.item: T = self.controller.get_item(_id).value
+        self.item_original: T = deepcopy(self.item)
+
+    def on_submit(self, context: base.Context):
+        item = self.build_item(context)
+        if self.item_original == item:
+            return
+        result = self.controller.update_item(item)
+        if self.show_error(result):
+            return
+        self.close()
