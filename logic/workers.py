@@ -14,6 +14,14 @@ class WorkersController(ItemsController[Worker]):
     name_max_len = 60
     name_min_len = 2
 
+    def get_all(self, only_chiefs=False, only_available=False):
+        return {
+            (False, False): super().get_all,
+            (False, True): self.source.get_available,
+            (True, False): self.source.get_chiefs,
+            (True, True): self.source.get_available_chiefs,
+        }.get((only_chiefs, only_available))()
+
     def get_chief_candidates(self, worker: Worker):
         return (
             self.source

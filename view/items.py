@@ -19,6 +19,10 @@ class ItemsView(ABC, Generic[T], base.BaseInteractiveWindow):
 
     TABLE_HEADERS = ["Пусто"]
 
+    def __init__(self):
+        super().__init__()
+        self.table_updater = None
+
     def build_layout(self):
         self.layout = layout.get_layout(self.TABLE_HEADERS)
 
@@ -48,7 +52,7 @@ class ItemsView(ABC, Generic[T], base.BaseInteractiveWindow):
 
     def dynamic_build(self):
         super().dynamic_build()
-        self.observe(
+        self.table_updater = self.switchable_observe(
             layout.table_entries,
             self.controller.get_all(),
             self.update_table,

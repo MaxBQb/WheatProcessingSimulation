@@ -1,9 +1,8 @@
 from .common import *
+from .styles import BUTTON_SUCCESS, BUTTON_ATTENTION, BUTTON_NEW
 
 
 # ID's
-from .styles import BUTTON_SUCCESS, BUTTON_ATTENTION, BUTTON_NEW
-
 label_entries_count = auto_id()
 table_entries = auto_id()
 button_add = auto_id()

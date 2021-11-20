@@ -1,5 +1,5 @@
 from . import *
-from .styles import BUTTON_NORMAL
+from .styles import BUTTON_NORMAL, DEFAULT_FONT
 
 
 def configure_inputs(window: sg.Window, *keys: str):
@@ -35,5 +35,14 @@ def choice_list(key: Hashable,
         select_mode=select_mode,
         size=(length, height),
         enable_events=True,
+        key=key,
+    )
+
+
+def check_box(text: str, key: Hashable):
+    return sg.Checkbox(
+        text,
+        enable_events=True,
+        font=(DEFAULT_FONT[0], DEFAULT_FONT[1]+2),
         key=key,
     )

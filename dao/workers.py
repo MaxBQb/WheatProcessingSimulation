@@ -6,14 +6,55 @@ from model import Worker
 
 
 class WorkersDAO(ItemsDAO[Worker]):
-
     @live_query(tables.worker, tables.role)
     def get_all(self):
-        with self._db.execute(
-            "SELECT WorkerId, WorkerName, RoleName FROM worker "
-            "INNER JOIN role ON worker.RoleId = role.RoleId "
-            "ORDER BY worker.RoleId, WorkerName"
-        ) as cursor:
+        with self._db.execute("""
+            SELECT * FROM view_workers worker  
+            ORDER BY RoleName, WorkerName
+        """) as cursor:
+            return list(cursor)
+
+    @live_query(
+        tables.worker,
+        tables.role,
+        tables.worker_to_production_line,
+        tables.production_line)
+    def get_available(self):
+        with self._db.execute("""
+            SELECT * FROM view_workers worker
+            WHERE worker.WorkerId NOT IN (
+                SELECT worker.WorkerId FROM worker
+                INNER JOIN worker_to_production_line wpl ON worker.WorkerId = wpl.WorkerId
+                INNER JOIN production_line pl ON wpl.ProductionLineId = pl.ProductionLineId
+                WHERE pl.ProductionFinishTime IS NULL 
+            )
+        """) as cursor:
+            return list(cursor)
+
+    @live_query(tables.worker, tables.role)
+    def get_chiefs(self):
+        with self._db.execute("""
+            SELECT * FROM view_workers worker
+            WHERE worker.SubordinatesCount > 0   
+        """) as cursor:
+            return list(cursor)
+
+    @live_query(
+        tables.worker,
+        tables.role,
+        tables.worker_to_production_line,
+        tables.production_line)
+    def get_available_chiefs(self):
+        with self._db.execute("""
+            SELECT * FROM view_workers worker
+            WHERE worker.WorkerId NOT IN (
+                SELECT worker.WorkerId FROM worker
+                INNER JOIN worker_to_production_line wpl ON worker.WorkerId = wpl.WorkerId
+                INNER JOIN production_line pl ON wpl.ProductionLineId = pl.ProductionLineId
+                WHERE pl.ProductionFinishTime IS NULL 
+            ) 
+            AND worker.SubordinatesCount > 0
+        """) as cursor:
             return list(cursor)
 
     @live_query(tables.worker, tables.role)
