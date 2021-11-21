@@ -1,14 +1,13 @@
+import PySimpleGUI as sg
 import inject
 
-import PySimpleGUI as sg
-import view.base as base
 import view.utils
+from dao.workers import WorkerFilterOptions
 from logic.table import Table
 from logic.workers import WorkersController
 from model import Worker
 from view import utils as utils, base as base
 from view.items import ItemsView, AddItemView, T, EditItemView
-from view.layout.base_table_layout import table_entries
 from view.layout import workers_controls as control_panel_layout, worker_layout as layout
 from view.update_handlers import restrict_length, make_text_update_handler, update_listbox
 
@@ -27,22 +26,18 @@ class WorkersView(ItemsView[Worker]):
 
     def set_handlers(self):
         super().set_handlers()
-        self.channel.subscribe(
-            control_panel_layout.checkbox_show_available,
-            self.on_filter_toggle
-        )
-        self.channel.subscribe(
-            control_panel_layout.checkbox_show_chiefs,
-            self.on_filter_toggle
+        self.channel.subscribe_foreach(
+            (
+                control_panel_layout.checkbox_show_available,
+                *control_panel_layout.radiobutton_show_chiefs.keys,
+            ), self.on_filter_toggle
         )
 
     def on_filter_toggle(self, context: base.Context):
-        show_chiefs: bool = context.values[control_panel_layout.checkbox_show_chiefs]
-        table: sg.Table = self.window[table_entries]
-        self.table_updater(self.controller.get_all(
-            show_chiefs,
+        self.table_updater(self.controller.get_all(WorkerFilterOptions(
+            control_panel_layout.radiobutton_show_chiefs.get_value(context.values),
             context.values[control_panel_layout.checkbox_show_available],
-        ))
+        )))
 
     @base.transition
     def open_add_item_view(self):

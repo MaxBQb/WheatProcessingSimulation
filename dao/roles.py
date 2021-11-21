@@ -10,7 +10,7 @@ live_query = dao.live_query.live_query(dao.live_query.tables.role)
 
 class RolesDAO(ItemsDAO[Role]):
     @live_query
-    def get_all(self):
+    def get_all(self, _=None):
         with self._db.execute(
             "SELECT * FROM role"
         ) as cursor:

@@ -13,7 +13,7 @@ class ItemsDAO(ABC, Generic[T], DAO):
 
     @live_query
     @abstractmethod
-    def get_all(self) -> list:
+    def get_all(self, filter_options=None) -> list:
         pass
 
     @live_query

@@ -29,7 +29,7 @@ def set_underline(label: sg.Text, underline=True):
     ))
 
 
-def auto_id():
+def auto_id() -> Hashable:
     return uuid.uuid4().hex
 
 

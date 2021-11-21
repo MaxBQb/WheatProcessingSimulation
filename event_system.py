@@ -9,6 +9,10 @@ class Channel(Generic[T]):
     def __init__(self):
         self._events_map: dict[Hashable, list[Channel.Callback]] = {}
 
+    def subscribe_foreach(self, events: tuple, *callbacks: Callback):
+        for event in events:
+            self.subscribe(event, *callbacks)
+
     def subscribe(self, event: Hashable, *callbacks: Callback):
         self._events_map.setdefault(event, [])
         self._events_map[event] += list(callbacks)

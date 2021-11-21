@@ -56,7 +56,7 @@ class Resource:
 
 @dataclass
 class Machine:
-    id: int
+    id: int = -1
     is_powered: bool = None
     type_id: int = None
     type: str = None

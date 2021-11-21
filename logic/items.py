@@ -8,8 +8,8 @@ T = TypeVar('T')
 class ItemsController(ABC, Generic[T]):
     source: ItemsDAO[T]
 
-    def get_all(self):
-        return self.source.get_all()
+    def get_all(self, filter_options=None):
+        return self.source.get_all(filter_options)
 
     def get_count(self):
         return self.source.get_count()

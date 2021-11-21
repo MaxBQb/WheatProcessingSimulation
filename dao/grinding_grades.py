@@ -10,7 +10,7 @@ live_query = dao.live_query.live_query(dao.live_query.tables.grinding_grade)
 
 class GrindingGradesDAO(ItemsDAO[GrindingGrade]):
     @live_query
-    def get_all(self):
+    def get_all(self, _=None):
         with self._db.execute(
             "SELECT * FROM grinding_grade"
         ) as cursor:

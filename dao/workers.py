@@ -1,60 +1,42 @@
-from dao.base import DAO
+from dataclasses import dataclass
+
+from dao.base import DAO, OptionalQuery
 from dao.items import ItemsDAO
 from dao.live_query import live_query, tables
 from mappers import table_to_model
 from model import Worker
 
 
-class WorkersDAO(ItemsDAO[Worker]):
-    @live_query(tables.worker, tables.role)
-    def get_all(self):
-        with self._db.execute("""
-            SELECT * FROM view_workers worker  
-            ORDER BY RoleName, WorkerName
-        """) as cursor:
-            return list(cursor)
+@dataclass
+class WorkerFilterOptions(OptionalQuery):
+    is_chief: bool = None
+    is_available: bool = False
 
-    @live_query(
-        tables.worker,
-        tables.role,
-        tables.worker_to_production_line,
-        tables.production_line)
-    def get_available(self):
-        with self._db.execute("""
-            SELECT * FROM view_workers worker
-            WHERE worker.WorkerId NOT IN (
+    def __post_init__(self):
+        super().__init__("AND")
+        self._add_toggle("""
+            worker.WorkerId NOT IN (
                 SELECT worker.WorkerId FROM worker
                 INNER JOIN worker_to_production_line wpl ON worker.WorkerId = wpl.WorkerId
                 INNER JOIN production_line pl ON wpl.ProductionLineId = pl.ProductionLineId
                 WHERE pl.ProductionFinishTime IS NULL 
             )
-        """) as cursor:
-            return list(cursor)
+        """, self.is_available)
+        self._add_option("(worker.SubordinatesCount > 0) = %s", self.is_chief)
 
-    @live_query(tables.worker, tables.role)
-    def get_chiefs(self):
-        with self._db.execute("""
-            SELECT * FROM view_workers worker
-            WHERE worker.SubordinatesCount > 0   
-        """) as cursor:
-            return list(cursor)
 
+class WorkersDAO(ItemsDAO[Worker]):
     @live_query(
         tables.worker,
         tables.role,
         tables.worker_to_production_line,
         tables.production_line)
-    def get_available_chiefs(self):
-        with self._db.execute("""
-            SELECT * FROM view_workers worker
-            WHERE worker.WorkerId NOT IN (
-                SELECT worker.WorkerId FROM worker
-                INNER JOIN worker_to_production_line wpl ON worker.WorkerId = wpl.WorkerId
-                INNER JOIN production_line pl ON wpl.ProductionLineId = pl.ProductionLineId
-                WHERE pl.ProductionFinishTime IS NULL 
-            ) 
-            AND worker.SubordinatesCount > 0
-        """) as cursor:
+    def get_all(self, filter_options: WorkerFilterOptions = None):
+        where_clause, params = DAO.get_clause("WHERE", filter_options)
+        with self._db.execute(
+            f"SELECT * FROM view_workers worker" + where_clause,
+            *params
+        ) as cursor:
             return list(cursor)
 
     @live_query(tables.worker, tables.role)

@@ -27,12 +27,8 @@ class ConfirmDialogView(base.BaseInteractiveWindow):
 
     def set_handlers(self):
         super().set_handlers()
-        self.channel.subscribe(
-            layout.button_yes,
-            self.on_button_pressed
-        )
-        self.channel.subscribe(
-            layout.button_no,
+        self.channel.subscribe_foreach(
+            (layout.button_yes, layout.button_no),
             self.on_button_pressed
         )
 
