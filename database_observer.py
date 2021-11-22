@@ -46,8 +46,11 @@ class DatabaseObserver:
 
     def _poll_db(self):
         while True:
-            for event in self._get_changes():
-                self._channel.publish(event, None)
+            try:
+                for event in self._get_changes():
+                    self._channel.publish(event, None)
+            except Exception as e:
+                print(e)
             sleep(self.config.database_observer.refresh_interval)
 
     def _get_changes(self):
