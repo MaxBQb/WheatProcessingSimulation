@@ -42,21 +42,30 @@ class WindowManager:
     def __init__(self):
         self._router = MutableChannelRouter()
         self._is_running = False
+        self.timeout = 100
 
     @property
     def router(self) -> ChannelRouter:
         return self._router
 
+    def await_window_closed(self, window: sg.Window):
+        while not window.was_closed():
+            event, values = window.read(self.timeout)
+            self._dispatch(window, event, values)
+
     def run(self):
         self._is_running = True
         while self._is_running:
-            window, event, values = sg.read_all_windows(100)
-            context = Context(window, event, values)
-            if window is None:
-                self._router.broadcast(event, context)
-            else:
-                self._router.publish(window, event, context)
+            window, event, values = sg.read_all_windows(self.timeout )
+            self._dispatch(window, event, values)
         self.close()
+
+    def _dispatch(self, window: sg.Window, event, values):
+        context = Context(window, event, values)
+        if window is None:
+            self._router.broadcast(event, context)
+        else:
+            self._router.publish(window, event, context)
 
     def close(self):
         self._is_running = False

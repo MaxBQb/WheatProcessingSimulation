@@ -47,6 +47,10 @@ class MainMenuView(base.BaseInteractiveWindow):
         for _id, _ in self._ways:
             self.window[_id].update(button_color='#555')
 
+    def close(self):
+        super().close()
+        self.window_manager.close()
+
     def init_window(self, **kwargs):
         super().init_window(**dict(
             size=(640, 400)

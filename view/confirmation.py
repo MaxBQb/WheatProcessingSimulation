@@ -19,6 +19,7 @@ class ConfirmDialogView(base.BaseInteractiveWindow):
 
     def run(self) -> bool:
         super().run()
+        self.window_manager.await_window_closed(self.window)
         return self.result
 
     def setup_window(self):
