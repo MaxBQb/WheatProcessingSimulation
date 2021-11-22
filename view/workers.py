@@ -65,7 +65,7 @@ class AddWorkerView(AddItemView[Worker]):
 
     def init_window(self, **kwargs):
         super().init_window(**dict(
-            size=(600, 500)
+            size=(600, 520)
         ) | kwargs)
 
     def set_handlers(self):

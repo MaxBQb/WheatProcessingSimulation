@@ -33,9 +33,8 @@ class MainMenuView(base.BaseInteractiveWindow):
         for _id, _class in self._ways:
             self.channel.subscribe(
                 _id,
-                self.mark('Green'),
+                self.mark,
                 lambda _, cls=_class: self.go_to(cls),
-                self.mark('Dark Green'),
             )
 
     @base.transition
@@ -53,12 +52,10 @@ class MainMenuView(base.BaseInteractiveWindow):
 
     def init_window(self, **kwargs):
         super().init_window(**dict(
-            size=(640, 400)
+            size=(620, 360)
         ) | kwargs)
 
-    def mark(self, color: str):
-        def on_event(context: base.Context):
-            for _id, _ in self._ways:
-                self.window[_id].update(button_color="#555")
-            context.element.update(button_color=color)
-        return on_event
+    def mark(self, context: base.Context):
+        for _id, _ in self._ways:
+            self.window[_id].update(button_color="#555")
+        context.element.update(button_color='#666')
