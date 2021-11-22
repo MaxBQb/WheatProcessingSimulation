@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from typing import Callable, Any, TypeVar
 import PySimpleGUI as sg
+import inject
+
 from view.layout import EMPTY_LAYOUT
 from typing import Hashable
 from view.utils import get_title, center
 from view.layout import submit_button
 from view.livedata import LiveData
-from event_system import MutableChannel, Channel
+from event_system import MutableChannel, Channel, ChannelRouter, MutableChannelRouter
 
 T = TypeVar("T")
 
@@ -34,6 +36,30 @@ def with_element(func):
     def wrapper(context: Context):
         return func(context.element, context)
     return wrapper
+
+
+class WindowManager:
+    def __init__(self):
+        self._router = MutableChannelRouter()
+        self._is_running = False
+
+    @property
+    def router(self) -> ChannelRouter:
+        return self._router
+
+    def run(self):
+        self._is_running = True
+        while self._is_running:
+            window, event, values = sg.read_all_windows(100)
+            context = Context(window, event, values)
+            if window is None:
+                self._router.broadcast(event, context)
+            else:
+                self._router.publish(window, event, context)
+        self.close()
+
+    def close(self):
+        self._is_running = False
 
 
 class BaseNonBlockingWindow:
@@ -94,6 +120,8 @@ class BaseNonBlockingWindow:
 
 
 class BaseInteractiveWindow(BaseNonBlockingWindow):
+    window_manager = inject.attr(WindowManager)
+
     HANDLER = Callable[[str, sg.Window, Any], None]
 
     title = get_title("base window")
@@ -101,7 +129,6 @@ class BaseInteractiveWindow(BaseNonBlockingWindow):
     def __init__(self):
         super().__init__()
         self._channel: MutableChannel[Context] = MutableChannel()
-        self.is_running = False
 
     @property
     def channel(self) -> Channel[Context]:
@@ -115,11 +142,12 @@ class BaseInteractiveWindow(BaseNonBlockingWindow):
         self.set_handlers()
         self.init_window()
         self.dynamic_build()
-        self.dispatch_events()
+        self._open()
 
     def close(self):
-        self.is_running = False
         self._close_dependent()
+        self.window.close()
+        self.window_manager.router.unsubscribe(self.window)
 
     def send_close_event(self):
         if not self.window.was_closed():
@@ -137,16 +165,11 @@ class BaseInteractiveWindow(BaseNonBlockingWindow):
             lambda _: self.close(),
         )
 
-    def run_event_loop(self):
-        self.is_running = True
-        while self.is_running:
-            yield self.window.read()
-        self.window.close()
-
-    def dispatch_events(self):
-        for event, values in self.run_event_loop():
-            context = Context(self.window, event, values)
-            self._channel.publish(event, context)
+    def _open(self):
+        self.window_manager.router.subscribe(
+            self.window,
+            self._channel
+        )
 
     def switchable_observe(self, _id: Hashable,
                            initial_livedata: LiveData,

@@ -5,6 +5,7 @@ from config import make_config, Config
 from database import Database
 from database_observer import DatabaseObserver
 from mappers import table_to_model
+from view.base import WindowManager
 from view.main_menu import MainMenuView
 from view.utils import init_theme
 
@@ -31,6 +32,7 @@ def main():
     db_observer.run()
     init_theme()
     MainMenuView().run()
+    inject.instance(WindowManager).run()
 
 
 def configure(binder: inject.Binder):

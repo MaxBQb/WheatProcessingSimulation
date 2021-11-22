@@ -32,3 +32,26 @@ class MutableChannel(Channel[T]):
         callbacks = self._events_map.get(event, self._NO_CALLBACKS)
         for callback in callbacks:
             callback(value)
+
+
+class ChannelRouter:
+    def __init__(self):
+        self._category_map: dict[Hashable, MutableChannel] = {}
+
+    def subscribe(self, category: Hashable, channel: MutableChannel):
+        self._category_map.setdefault(category, channel)
+
+    def unsubscribe(self, category: Hashable):
+        del self._category_map[category]
+
+
+class MutableChannelRouter(ChannelRouter):
+    def publish(self, category: Hashable, event: Hashable, value):
+        channel = self._category_map.get(category, None)
+        if not channel:
+            return
+        channel.publish(event, value)
+
+    def broadcast(self, event: Hashable, value):
+        for category in self._category_map:
+            self.publish(category, event, value)

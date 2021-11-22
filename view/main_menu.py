@@ -33,9 +33,9 @@ class MainMenuView(base.BaseInteractiveWindow):
         for _id, _class in self._ways:
             self.channel.subscribe(
                 _id,
-                self.mark('Green', False),
+                self.mark('Green'),
                 lambda _, cls=_class: self.go_to(cls),
-                self.mark('Dark Green', True),
+                self.mark('Dark Green'),
             )
 
     @base.transition
@@ -52,10 +52,9 @@ class MainMenuView(base.BaseInteractiveWindow):
             size=(640, 400)
         ) | kwargs)
 
-    def mark(self, color: str, is_enabled: bool):
+    def mark(self, color: str):
         def on_event(context: base.Context):
             for _id, _ in self._ways:
-                self.window[_id].update(disabled=not is_enabled,
-                                        button_color="#555" if is_enabled else "#444")
+                self.window[_id].update(button_color="#555")
             context.element.update(button_color=color)
         return on_event
