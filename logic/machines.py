@@ -11,16 +11,6 @@ class MachinesController(ItemsController[Machine]):
     source = inject.attr(MachinesDAO)
     types_controller = inject.attr(MachineTypesController)
 
-    def get_all(self, filter_options=None):
-        def to_readable_bool(data: list[tuple]):
-            if not data:
-                return data
-            for i in range(len(data)):
-                *other, last = data[i]
-                data[i] = (*other, "Да" if last else "Нет")
-            return data
-        return super().get_all(filter_options).map(to_readable_bool)
-
     def get_types(self):
         return self.types_controller.get_all().map(Table)
 

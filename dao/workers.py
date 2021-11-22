@@ -34,7 +34,7 @@ class WorkersDAO(ItemsDAO[Worker]):
     def get_all(self, filter_options: WorkerFilterOptions = None):
         where_clause, params = DAO.get_clause("WHERE", filter_options)
         with self._db.execute(
-            f"SELECT * FROM view_workers worker" + where_clause,
+            f"SELECT * FROM view_worker worker" + where_clause,
             *params
         ) as cursor:
             return list(cursor)

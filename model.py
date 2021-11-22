@@ -1,14 +1,13 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import NewType
 
 
 @dataclass
 class LegalEntity:
-    id: int
+    id: int = -1
     contact_phone: str = None
     address: str = None
-    legal_entity_name: str = None
+    name: str = None
 
 
 @dataclass

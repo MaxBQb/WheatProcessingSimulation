@@ -1,7 +1,9 @@
 import view.base as base
+from view import utils
 from view.flour_grades import FlourGradesView
 from view.grinding_grades import GrindingGradesView
 from view.layout import main_menu_layout as layout
+from view.legal_entities import LegalEntitiesView
 from view.machine_types import MachineTypesView
 from view.machines import MachinesView
 from view.roles import RolesView
@@ -9,6 +11,8 @@ from view.workers import WorkersView
 
 
 class MainMenuView(base.BaseInteractiveWindow):
+    title = utils.get_title("Главное меню")
+
     def __init__(self):
         super().__init__()
         self._ways = (
@@ -18,6 +22,7 @@ class MainMenuView(base.BaseInteractiveWindow):
             (layout.button_flour_grades, FlourGradesView),
             (layout.button_grinding_grades, GrindingGradesView),
             (layout.button_machines, MachinesView),
+            (layout.button_legal_entities, LegalEntitiesView),
         )
 
     def build_layout(self):

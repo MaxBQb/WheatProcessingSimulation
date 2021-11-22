@@ -80,6 +80,10 @@ def first(array, default=None):
     return next(iter(array), default)
 
 
+def strip(text: str = None):
+    return (text or "").strip() or None
+
+
 def configure(*elements, **kwargs):
     for element in elements:
         element.Widget.config(

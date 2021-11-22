@@ -40,6 +40,13 @@ class MachinesView(ItemsView[Machine]):
         )
         self.table_updater(self.controller.get_all(options))
 
+    def table_value_to_str(self, value, column: int, row: int):
+        return super().table_value_to_str(
+            bool(value) if column == 2 else value,
+            column,
+            row
+        )
+
     @base.transition
     def open_add_item_view(self):
         return AddMachineView()
@@ -64,7 +71,7 @@ class AddMachineView(AddItemView[Machine]):
 
     def init_window(self, **kwargs):
         super().init_window(**dict(
-            size=(600, 500)
+            size=(600, 300)
         ) | kwargs)
 
     def dynamic_build(self):
@@ -100,12 +107,12 @@ class EditMachineView(EditItemView[Machine], AddMachineView):
 
     def dynamic_build(self):
         super().dynamic_build()
-        self.window[layout.checkbox_is_powered].update(self.item.is_chief)
+        self.window[layout.checkbox_is_powered].update(self.item.is_powered)
 
     def update_types_list(self, element: sg.Listbox,
                           context: base.Context):
         super().update_types_list(element, context)
         if not self.__type_loaded:
-            pos = list(self.types.column(0)).index(self.item.type_id)
+            pos = list(self.machine_types.column(0)).index(self.item.type_id)
             element.update(set_to_index=pos, scroll_to_index=pos)
             self.__type_loaded = True

@@ -6,6 +6,7 @@ import PySimpleGUI as sg
 
 import view.base as base
 from logic.items import ItemsController
+from logic.table import Table
 from view import base as base
 from view.confirmation import ConfirmDialogView
 from view.layout import base_table_layout as layout, submit_button
@@ -25,6 +26,7 @@ class ItemsView(ABC, Generic[T], base.BaseInteractiveWindow):
     def __init__(self):
         super().__init__()
         self.table_updater = None
+        self.table_values = Table()
 
     def build_layout(self):
         self.layout = layout.get_layout(self.TABLE_HEADERS)
@@ -103,17 +105,33 @@ class ItemsView(ABC, Generic[T], base.BaseInteractiveWindow):
             self.controller.get_delete_confirmation_text(count)
         )
 
+    def table_value_to_str(self, value, column: int, row: int):
+        if value is None:
+            return '—'
+        if isinstance(value, bool):
+            return "Да" if value else "Нет"
+        return str(value)
+
     def update_table(self, table: sg.Table, context: base.Context):
-        values = [
-            [str(val) for val in row]
-            for row in context.value
+        values = Table([
+            [self.table_value_to_str(value, column_num, row_num)
+             for column_num, value in enumerate(row)]
+            for row_num, row in enumerate(context.value)
+        ])
+        selected = [
+            list(values.column(0)).index(
+                self.table_values.cell(0, selected_row)
+            )
+            for selected_row in table.SelectedRows
+            if self.table_values.cell(0, selected_row, None) in values.column(0)
         ]
-        table.update(values=values)
+        self.table_values = values
+        table.update(values=values.data, select_rows=selected)
         self.window[layout.button_delete].update(visible=False)
         self.window[layout.button_edit].update(visible=False)
 
     def on_item_selected(self, context: base.Context):
-        self.window[layout.button_delete].update(visible=True)
+        self.window[layout.button_delete].update(visible=bool(len(context.value)))
         self.window[layout.button_edit].update(
             visible=len(context.value) == 1
         )

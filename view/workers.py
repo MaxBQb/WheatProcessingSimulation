@@ -113,7 +113,7 @@ class AddWorkerView(AddItemView[Worker]):
 
     def build_item(self, context: base.Context) -> T:
         item, values = self.item, context.values
-        item.name = values[layout.input_name]
+        item.name = utils.strip(values[layout.input_name])
 
         row = utils.first(self.window[layout.choice_list_role].get_indexes(), None)
         item.role_id = self.roles.cell(0, row, None)

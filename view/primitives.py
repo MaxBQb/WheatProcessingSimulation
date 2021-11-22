@@ -5,6 +5,7 @@ from view import base as base
 from view.items import ItemsView, AddItemView, EditItemView, T
 from view.layout import primitive_layout as layout
 from view.update_handlers import restrict_length, make_text_update_handler
+from view.utils import strip
 
 
 class PrimitivesView(Generic[T], ItemsView[T], ABC):
@@ -47,7 +48,7 @@ class AddPrimitiveView(Generic[T], AddItemView[T], ABC):
         layout.on_finalized(self.window)
 
     def build_item(self, context: base.Context) -> T:
-        self.item.name = context.values[layout.input_name]
+        self.item.name = strip(context.values[layout.input_name])
         return self.item
 
 
