@@ -71,6 +71,13 @@ class Worker:
 
 
 @dataclass
+class ResourceType:
+    id: int = -1
+    name: str = None
+    is_producible: bool = None
+
+
+@dataclass
 class _Primitive:
     id: int = -1
     name: str = None

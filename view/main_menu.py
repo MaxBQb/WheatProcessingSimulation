@@ -6,6 +6,7 @@ from view.layout import main_menu_layout as layout
 from view.legal_entities import LegalEntitiesView
 from view.machine_types import MachineTypesView
 from view.machines import MachinesView
+from view.resource_types import ResourceTypesView
 from view.roles import RolesView
 from view.standards import StandardsView
 from view.workers import WorkersView
@@ -25,6 +26,7 @@ class MainMenuView(base.BaseInteractiveWindow):
             (layout.button_machines, MachinesView),
             (layout.button_legal_entities, LegalEntitiesView),
             (layout.button_standards, StandardsView),
+            (layout.button_resource_types, ResourceTypesView),
         )
 
     def build_layout(self):
