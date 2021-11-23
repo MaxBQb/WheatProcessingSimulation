@@ -4,14 +4,13 @@ from typing import TypeVar, Generic
 
 import PySimpleGUI as sg
 
-import view.base as base
 from logic.items import ItemsController
 from logic.table import Table
 from view import base as base
 from view.confirmation import ConfirmDialogView
 from view.layout import base_table_layout as layout, submit_button
 from view.update_handlers import make_text_update_handler
-
+from view.utils import auto_id
 
 T = TypeVar('T')
 
@@ -169,8 +168,24 @@ class AddItemView(ABC, Generic[T], base.BaseInteractiveWindow):
 class EditItemView(Generic[T], AddItemView[T], ABC):
     def __init__(self, _id: int):
         super().__init__()
-        self.item: T = self.controller.get_item(_id).value
+        self.item_livedata = self.controller.get_item(_id)
+        self.item: T = self.item_livedata.value
         self.item_original: T = deepcopy(self.item)
+
+    def dynamic_build(self):
+        super().dynamic_build()
+        self.item_livedata.observe(
+            self.window,
+            self.channel,
+            self.on_item_updated,
+            auto_id()
+        )
+
+    def on_item_updated(self, context: base.Context):
+        if context.value is None:
+            self.send_close_event()
+        else:
+            self.item_original = deepcopy(context.value)
 
     def on_submit(self, context: base.Context):
         item = self.build_item(context)

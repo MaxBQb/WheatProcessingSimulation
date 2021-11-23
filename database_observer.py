@@ -1,6 +1,5 @@
 from threading import Thread
 from time import sleep
-from typing import final
 
 import inject
 
@@ -22,8 +21,7 @@ class DatabaseObserver:
             target=self._poll_db,
             daemon=True
         )
-        self._UPDATE_EVENT: final = 0
-        self._UPDATE_EVENT += 8
+        self._UPDATE_EVENT = 0
 
     def subscribe(self, *callbacks: Channel.Callback):
         self._channel.subscribe(self._UPDATE_EVENT, *callbacks)
