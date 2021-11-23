@@ -1,15 +1,21 @@
 from dao.base import DAO
-from dao.items import ItemsDAO
+from dao.items import ItemsDAO, ItemFilterOptions
 from dao.live_query import live_query
 from mappers import table_to_model
 from model import MachineType
 
 
+class MachineTypesOptions(ItemFilterOptions):
+    _NAME_FILTERS = ["MachineTypeName"]
+
+
 class MachineTypesDAO(ItemsDAO[MachineType]):
     @live_query
-    def get_all(self, _=None):
+    def get_all(self, filter_options: MachineTypesOptions = None):
+        where_clause, params = DAO.get_clause("WHERE", filter_options)
         with self._db.execute(
-            "SELECT * FROM machine_type"
+            "SELECT * FROM machine_type " + where_clause,
+            *params
         ) as cursor:
             return list(cursor)
 

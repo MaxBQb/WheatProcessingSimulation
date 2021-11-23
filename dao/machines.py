@@ -1,19 +1,21 @@
 from dataclasses import dataclass
 
-from dao.base import DAO, OptionalQuery
-from dao.items import ItemsDAO
+from dao.base import DAO
+from dao.items import ItemsDAO, ItemFilterOptions
 from dao.live_query import live_query
 from mappers import table_to_model
 from model import Machine
 
 
 @dataclass
-class MachineFilterOptions(OptionalQuery):
+class MachineFilterOptions(ItemFilterOptions):
     is_powered: bool = None
     is_available: bool = False
 
+    _NAME_FILTERS = ["MachineTypeName"]
+
     def __post_init__(self):
-        super().__init__("AND")
+        super().__post_init__()
         self._add_toggle("""
             machine.MachineId NOT IN (
                 SELECT machine.MachineId FROM machine

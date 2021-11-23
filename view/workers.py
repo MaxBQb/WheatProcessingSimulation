@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 import inject
 
 import view.utils
+from dao.base import OptionalQuery
 from dao.workers import WorkerFilterOptions
 from logic.table import Table
 from logic.workers import WorkersController
@@ -33,11 +34,12 @@ class WorkersView(ItemsView[Worker]):
             ), self.on_filter_toggle
         )
 
-    def on_filter_toggle(self, context: base.Context):
-        self.table_updater(self.controller.get_all(WorkerFilterOptions(
+    def get_filter(self, context: base.Context) -> OptionalQuery:
+        return self.controller.filter_type(
+            self.get_search_query(context),
             control_panel_layout.radiobutton_show_chiefs.get_value(context.values),
             context.values[control_panel_layout.checkbox_show_available],
-        )))
+        )
 
     @base.transition
     def open_add_item_view(self):

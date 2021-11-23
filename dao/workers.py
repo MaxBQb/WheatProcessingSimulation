@@ -1,19 +1,24 @@
 from dataclasses import dataclass
 
-from dao.base import DAO, OptionalQuery
-from dao.items import ItemsDAO
+from dao.base import DAO
+from dao.items import ItemsDAO, ItemFilterOptions
 from dao.live_query import live_query
 from mappers import table_to_model
 from model import Worker
 
 
 @dataclass
-class WorkerFilterOptions(OptionalQuery):
+class WorkerFilterOptions(ItemFilterOptions):
     is_chief: bool = None
     is_available: bool = False
 
-    def __post_init__(self):
-        super().__init__("AND")
+    _NAME_FILTERS = [
+        "WorkerName",
+        "RoleName",
+    ]
+
+    def C(self):
+        super().__post_init__()
         self._add_toggle("""
             worker.WorkerId NOT IN (
                 SELECT worker.WorkerId FROM worker

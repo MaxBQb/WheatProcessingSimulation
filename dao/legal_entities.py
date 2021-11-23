@@ -1,15 +1,25 @@
 from dao.base import DAO
-from dao.items import ItemsDAO
+from dao.items import ItemsDAO, ItemFilterOptions
 from dao.live_query import live_query
 from mappers import table_to_model
 from model import LegalEntity
 
 
+class LegalEntitiesFilterOptions(ItemFilterOptions):
+    _NAME_FILTERS = [
+        "LegalEntityName",
+        "Address",
+        "ContactPhone",
+    ]
+
+
 class LegalEntitiesDAO(ItemsDAO[LegalEntity]):
     @live_query
-    def get_all(self, _=None):
+    def get_all(self, filter_options: LegalEntitiesFilterOptions = None):
+        where_clause, params = DAO.get_clause("WHERE", filter_options)
         with self._db.execute(
-            "SELECT * FROM view_legal_entity legal_entity"
+            "SELECT * FROM view_legal_entity legal_entity " + where_clause,
+            *params
         ) as cursor:
             return list(cursor)
 

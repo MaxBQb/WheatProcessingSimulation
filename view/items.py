@@ -4,13 +4,15 @@ from typing import TypeVar, Generic
 
 import PySimpleGUI as sg
 
+from dao.base import OptionalQuery
+from dao.items import ItemFilterOptions
 from logic.items import ItemsController
 from logic.table import Table
 from view import base as base
 from view.confirmation import ConfirmDialogView
 from view.layout import base_table_layout as layout, submit_button
 from view.update_handlers import make_text_update_handler
-from view.utils import auto_id, get_new_selection
+from view.utils import auto_id, get_new_selection, strip
 
 T = TypeVar('T')
 
@@ -56,6 +58,7 @@ class ItemsView(ABC, Generic[T], base.BaseInteractiveWindow):
 
     def dynamic_build(self):
         super().dynamic_build()
+        layout.on_finalized(self.window)
         self.table_updater = self.switchable_observe(
             layout.table_entries,
             self.controller.get_all(),
@@ -65,6 +68,10 @@ class ItemsView(ABC, Generic[T], base.BaseInteractiveWindow):
             layout.label_entries_count,
             self.controller.get_count(),
             make_text_update_handler(self.LABEL_CURRENT_COUNT),
+        )
+        self.channel.subscribe(
+            layout.input_search,
+            self.on_filter_toggle
         )
 
     @abstractmethod
@@ -97,6 +104,15 @@ class ItemsView(ABC, Generic[T], base.BaseInteractiveWindow):
         if not self.open_delete_confirmation(len(ids)):
             return
         self.show_error(self.controller.delete_items(*ids))
+
+    def on_filter_toggle(self, context: base.Context):
+        self.table_updater(self.controller.get_all(self.get_filter(context)))
+
+    def get_search_query(self, context: base.Context):
+        return strip(context.values[layout.input_search])
+
+    def get_filter(self, context: base.Context) -> OptionalQuery:
+        return self.controller.filter_type(self.get_search_query(context))
 
     @base.transition
     def open_delete_confirmation(self, count: int):

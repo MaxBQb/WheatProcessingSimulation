@@ -1,6 +1,6 @@
 import inject
 
-from dao.workers import WorkersDAO
+from dao.workers import WorkersDAO, WorkerFilterOptions
 from logic.items import ItemsController
 from logic.roles import RolesController
 from logic.table import Table
@@ -10,6 +10,7 @@ from model import Worker
 class WorkersController(ItemsController[Worker]):
     source = inject.attr(WorkersDAO)
     roles_controller = inject.attr(RolesController)
+    filter_type = WorkerFilterOptions
 
     name_max_len = 60
     name_min_len = 2

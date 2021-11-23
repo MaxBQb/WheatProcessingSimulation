@@ -34,6 +34,13 @@ class OptionalQuery:
         self._default_operator = default_operator
         self.query = ""
         self.params = []
+        self.kwparams = {}
+
+    def _add_toggle_group(self, statement: 'OptionalQuery', value: bool, operator: str = None):
+        if not value:
+            return
+        self.__add(f"({statement.query})", value, operator)
+        self.params += statement.params
 
     def _add_option(self, statement: str, value, operator: str = None):
         if value is None:
@@ -49,4 +56,4 @@ class OptionalQuery:
             return
         if self.query:
             self.query += f' {(operator or self._default_operator)} '
-        self.query += statement.strip()  # .format(value)
+        self.query += statement.strip()

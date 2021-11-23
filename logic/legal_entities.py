@@ -1,13 +1,14 @@
 from typing import Union
 
 import inject
-from dao.legal_entities import LegalEntitiesDAO
+from dao.legal_entities import LegalEntitiesDAO, LegalEntitiesFilterOptions
 from logic.items import ItemsController
 from model import LegalEntity
 
 
 class LegalEntitiesController(ItemsController[LegalEntity]):
     source = inject.attr(LegalEntitiesDAO)
+    filter_type = LegalEntitiesFilterOptions
 
     name_max_len = 60
     name_min_len = 2

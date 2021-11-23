@@ -1,15 +1,21 @@
 from dao.base import DAO
-from dao.items import ItemsDAO
+from dao.items import ItemsDAO, ItemFilterOptions
 from dao.live_query import live_query
 from mappers import table_to_model
 from model import FlourGrade
 
 
+class FlourGradesFilterOptions(ItemFilterOptions):
+    _NAME_FILTERS = ["FlourGradeName"]
+
+
 class FlourGradesDAO(ItemsDAO[FlourGrade]):
     @live_query
-    def get_all(self, _=None):
+    def get_all(self, filter_options: FlourGradesFilterOptions = None):
+        where_clause, params = DAO.get_clause("WHERE", filter_options)
         with self._db.execute(
-            "SELECT * FROM flour_grade"
+            "SELECT * FROM flour_grade " + where_clause,
+            *params
         ) as cursor:
             return list(cursor)
 

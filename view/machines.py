@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 import inject
 
 import view.utils
+from dao.base import OptionalQuery
 from dao.machines import MachineFilterOptions
 from logic.machines import MachinesController
 from logic.table import Table
@@ -33,12 +34,12 @@ class MachinesView(ItemsView[Machine]):
             ), self.on_filter_toggle
         )
 
-    def on_filter_toggle(self, context: base.Context):
-        options = MachineFilterOptions(
+    def get_filter(self, context: base.Context) -> OptionalQuery:
+        return self.controller.filter_type(
+            self.get_search_query(context),
             control_panel_layout.radiobutton_show_powered.get_value(context.values),
             context.values[control_panel_layout.checkbox_show_available],
         )
-        self.table_updater(self.controller.get_all(options))
 
     def table_value_to_str(self, value, column: int, row: int):
         return super().table_value_to_str(

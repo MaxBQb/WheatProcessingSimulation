@@ -17,7 +17,7 @@ class PrimitivesView(Generic[T], ItemsView[T], ABC):
 
     def init_window(self, **kwargs):
         super().init_window(**dict(
-            size=(500, 360)
+            size=(500, 440)
         ) | kwargs)
 
 

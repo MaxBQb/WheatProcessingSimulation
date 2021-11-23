@@ -1,4 +1,4 @@
-from dao.items import ItemsDAO
+from dao.items import ItemsDAO, ItemFilterOptions
 from abc import ABC, abstractmethod
 from typing import TypeVar, Generic, Optional
 
@@ -7,6 +7,7 @@ T = TypeVar('T')
 
 class ItemsController(ABC, Generic[T]):
     source: ItemsDAO[T]
+    filter_type = ItemFilterOptions
 
     def get_all(self, filter_options=None):
         return self.source.get_all(filter_options)

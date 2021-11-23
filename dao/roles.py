@@ -1,15 +1,21 @@
 from dao.base import DAO
-from dao.items import ItemsDAO
+from dao.items import ItemsDAO, ItemFilterOptions
 from dao.live_query import live_query
 from mappers import table_to_model
 from model import Role
 
 
+class RolesFilterOptions(ItemFilterOptions):
+    _NAME_FILTERS = ["RoleName"]
+
+
 class RolesDAO(ItemsDAO[Role]):
     @live_query
-    def get_all(self, _=None):
+    def get_all(self, filter_options: RolesFilterOptions = None):
+        where_clause, params = DAO.get_clause("WHERE", filter_options)
         with self._db.execute(
-            "SELECT * FROM role"
+            "SELECT * FROM role " + where_clause,
+            *params
         ) as cursor:
             return list(cursor)
 

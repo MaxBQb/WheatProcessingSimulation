@@ -2,7 +2,10 @@ from .common import *
 from .styles import BUTTON_SUCCESS, BUTTON_ATTENTION, BUTTON_NEW
 
 
+inputs = utils.Holder()
+
 # ID's
+input_search = inputs(auto_id())
 label_entries_count = auto_id()
 table_entries = auto_id()
 button_add = auto_id()
@@ -35,5 +38,9 @@ def get_layout(table_headers: list[str]):
                 button('Удалить', button_delete, **BUTTON_ATTENTION),
             )]
         ],
+        [label("Поиск"), inputElem(input_search)],
     ]
 
+
+def on_finalized(window: sg.Window):
+    configure_inputs(window, *inputs.items)
