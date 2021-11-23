@@ -84,8 +84,9 @@ class AddMachineView(AddItemView[Machine]):
 
     def update_types_list(self, element: sg.Listbox,
                           context: base.Context):
+        selected = utils.get_new_selection(self.machine_types, context.value, element.get_indexes())
         self.machine_types: Table = context.value
-        update_listbox(element, list(self.machine_types.column(1)))
+        update_listbox(element, list(self.machine_types.column(1)), selected)
 
     def build_item(self, context: base.Context) -> T:
         item, values = self.item, context.values

@@ -10,7 +10,7 @@ from view import base as base
 from view.confirmation import ConfirmDialogView
 from view.layout import base_table_layout as layout, submit_button
 from view.update_handlers import make_text_update_handler
-from view.utils import auto_id
+from view.utils import auto_id, get_new_selection
 
 T = TypeVar('T')
 
@@ -117,13 +117,7 @@ class ItemsView(ABC, Generic[T], base.BaseInteractiveWindow):
              for column_num, value in enumerate(row)]
             for row_num, row in enumerate(context.value)
         ])
-        selected = [
-            list(values.column(0)).index(
-                self.table_values.cell(0, selected_row)
-            )
-            for selected_row in table.SelectedRows
-            if self.table_values.cell(0, selected_row, None) in values.column(0)
-        ]
+        selected = get_new_selection(self.table_values, values, table.SelectedRows)
         self.table_values = values
         table.update(values=values.data, select_rows=selected)
         self.window[layout.button_delete].update(visible=False)

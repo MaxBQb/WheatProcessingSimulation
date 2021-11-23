@@ -97,19 +97,24 @@ class AddWorkerView(AddItemView[Worker]):
         )
 
     def on_role_selected(self, context: base.Context):
-        self.item.role_id = self.roles.cell(0, utils.first(context.element.get_indexes()), None)
+        new_role_id = self.roles.cell(0, utils.first(context.element.get_indexes()), None)
+        if self.item.role_id == new_role_id:
+            return
+        self.item.role_id = new_role_id
         self.chief_list_updater(self.controller.get_chief_candidates(self.item))
 
     def update_roles_list(self, element: sg.Listbox,
                           context: base.Context):
+        selected = utils.get_new_selection(self.roles, context.value, element.get_indexes())
         self.roles: Table = context.value
-        update_listbox(element, list(self.roles.column(1)))
+        update_listbox(element, list(self.roles.column(1)), selected)
 
     def update_chief_candidates_list(self,
                                      element: sg.Listbox,
                                      context: base.Context):
+        selected = utils.get_new_selection(self.workers, context.value, element.get_indexes())
         self.workers: Table = context.value
-        update_listbox(element, list(self.workers.column(1)))
+        update_listbox(element, list(self.workers.column(1)), selected)
 
     def build_item(self, context: base.Context) -> T:
         item, values = self.item, context.values
@@ -154,4 +159,4 @@ class EditWorkerView(EditItemView[Worker], AddWorkerView):
             else:
                 pos = list(self.workers.column(0)).index(self.item.chief_id) + 1
             element.update(set_to_index=pos, scroll_to_index=pos)
-            self.__role_loaded = True
+            self.__chief_candidates_loaded = True

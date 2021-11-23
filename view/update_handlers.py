@@ -19,8 +19,10 @@ def make_text_update_handler(text_format: Union[str, Callable[[str], str]] = "{}
     return update_label
 
 
-def update_listbox(element: sg.Listbox, values: list):
-    element.update(values=values)
+def update_listbox(element: sg.Listbox, values: list, selected: list[int] = None):
+    if selected is None:
+        selected = []
+    element.update(values=values, set_to_index=selected)
     element.set_size((max_len(values)+1, element.Size[1]))
 
 
