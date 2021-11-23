@@ -4,6 +4,11 @@ class Table:
     def __init__(self, data=None):
         self.data = data or self._NO_DATA
 
+    def __eq__(self, other):
+        if isinstance(other, Table):
+            return self.data == other.data
+        return super().__eq__(other)
+
     def column(self, number: int):
         return (row[number] for row in self.data)
 

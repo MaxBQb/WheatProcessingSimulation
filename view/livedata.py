@@ -24,6 +24,8 @@ class LiveData(Generic[T]):
     def value(self, value: T):
         for func in self._transformations:
             value = func(value)
+        if self._value == value:
+            return
         self._value = value
         self._channel.publish(self._EVENT, value)
 
