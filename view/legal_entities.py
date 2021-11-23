@@ -45,9 +45,6 @@ class AddLegalEntityView(AddItemView[LegalEntity]):
     def __init__(self):
         super().__init__()
         self.item = LegalEntity()
-        self.roles = Table()
-        self.legal_entities = Table()
-        self.chief_list_updater = None
 
     def build_layout(self):
         self.layout = layout.get_layout()

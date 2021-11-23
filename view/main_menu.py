@@ -7,6 +7,7 @@ from view.legal_entities import LegalEntitiesView
 from view.machine_types import MachineTypesView
 from view.machines import MachinesView
 from view.roles import RolesView
+from view.standards import StandardsView
 from view.workers import WorkersView
 
 
@@ -23,6 +24,7 @@ class MainMenuView(base.BaseInteractiveWindow):
             (layout.button_grinding_grades, GrindingGradesView),
             (layout.button_machines, MachinesView),
             (layout.button_legal_entities, LegalEntitiesView),
+            (layout.button_standards, StandardsView),
         )
 
     def build_layout(self):

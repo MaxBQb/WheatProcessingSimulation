@@ -8,7 +8,7 @@ input_name = auto_id()
 def get_layout(name: str):
     return [
         [utils.center(label("Заполните поле ниже"))],
-        [label(name.capitalize()), inputElem(input_name)],
+        [label(name.capitalize()), input_elem(input_name)],
     ]
 
 

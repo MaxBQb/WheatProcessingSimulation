@@ -38,7 +38,7 @@ def get_layout(table_headers: list[str]):
                 button('Удалить', button_delete, **BUTTON_ATTENTION),
             )]
         ],
-        [label("Поиск"), inputElem(input_search)],
+        [label("Поиск"), input_elem(input_search)],
     ]
 
 

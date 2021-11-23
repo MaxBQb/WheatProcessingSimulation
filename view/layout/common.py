@@ -13,8 +13,16 @@ def label(text: str):
     return sg.Text(f"{text}: ")
 
 
-def inputElem(key: Hashable):
+def input_elem(key: Hashable):
     return sg.Input(**const.INPUT_DEFAULTS, key=key, enable_events=True)
+
+
+def multiline_input(key: Hashable):
+    return sg.Multiline(**const.MULTILINE_DEFAULTS,
+                        key=key,
+                        size=(600, 8),
+                        autoscroll=True,
+                        enable_events=True)
 
 
 def button(text: str, key: Hashable, **kwargs):

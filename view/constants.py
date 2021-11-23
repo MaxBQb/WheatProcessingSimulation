@@ -14,6 +14,10 @@ INPUT_DEFAULTS = dict(
     disabled_readonly_background_color="#222",
     font=('Consolas', 12)
 )
+MULTILINE_DEFAULTS = dict(
+    font=INPUT_DEFAULTS['font'],
+    no_scrollbar=True,
+)
 LIST_BOX_DEFAULTS = dict(
     background_color="#313131",
     no_scrollbar=True,

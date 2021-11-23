@@ -23,7 +23,7 @@ class Contract:
 
 @dataclass
 class Standard:
-    id: int
+    id: int = -1
     name: str = None
     description: str = None
 
