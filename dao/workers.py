@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from dao.base import DAO, OptionalQuery
 from dao.items import ItemsDAO
-from dao.live_query import live_query, tables
+from dao.live_query import live_query
 from mappers import table_to_model
 from model import Worker
 
@@ -26,11 +26,7 @@ class WorkerFilterOptions(OptionalQuery):
 
 
 class WorkersDAO(ItemsDAO[Worker]):
-    @live_query(
-        tables.worker,
-        tables.role,
-        tables.worker_to_production_line,
-        tables.production_line)
+    @live_query
     def get_all(self, filter_options: WorkerFilterOptions = None):
         where_clause, params = DAO.get_clause("WHERE", filter_options)
         with self._db.execute(
@@ -39,7 +35,7 @@ class WorkersDAO(ItemsDAO[Worker]):
         ) as cursor:
             return list(cursor)
 
-    @live_query(tables.worker, tables.role)
+    @live_query
     def get_item(self, _id: int) -> Worker:
         with self._db.execute(
             "SELECT * FROM worker "
@@ -48,7 +44,7 @@ class WorkersDAO(ItemsDAO[Worker]):
         ) as cursor:
             return table_to_model(cursor.column_names, next(cursor, None), Worker)
 
-    @live_query(tables.worker, tables.role)
+    @live_query
     def get_chief_candidates(self, worker: Worker):
         with self._db.execute(
             "SELECT WorkerId, WorkerName, RoleName FROM worker "
@@ -59,7 +55,7 @@ class WorkersDAO(ItemsDAO[Worker]):
         ) as cursor:
             return list(cursor)
 
-    @live_query(tables.worker)
+    @live_query
     def get_count(self) -> int:
         with self._db.execute(
             "SELECT COUNT(*) FROM worker"

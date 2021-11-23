@@ -1,5 +1,6 @@
 from threading import Thread
 from time import sleep
+from typing import final
 
 import inject
 
@@ -12,34 +13,20 @@ class DatabaseObserver:
     source = inject.attr(ChangesDAO)
     config = inject.attr(Config)
 
-    class Event:
-        contract = "contract"
-        flour_grade = "flour_grade"
-        grinding_grade = "grinding_grade"
-        legal_entity = "legal_entity"
-        machine = "machine"
-        machine_to_production_line = "machine_to_production_line"
-        machine_type = "machine_type"
-        production_line = "production_line"
-        resource = "resource"
-        resource_type = "resource_type"
-        role = "role"
-        standard = "standard"
-        worker = "worker"
-        worker_to_production_line = "worker_to_production_line"
-
     def __init__(self):
         self._channel: MutableChannel[None] = MutableChannel()
-        self._current_state = {}
+        self._last_change = None
+        self._force_update = True
         self._thread = Thread(
             name="DatabasePolling",
             target=self._poll_db,
             daemon=True
         )
+        self._UPDATE_EVENT: final = 0
+        self._UPDATE_EVENT += 8
 
-    @property
-    def channel(self) -> Channel[None]:
-        return self._channel
+    def subscribe(self, *callbacks: Channel.Callback):
+        self._channel.subscribe(self._UPDATE_EVENT, *callbacks)
 
     def run(self):
         self._thread.start()
@@ -47,18 +34,20 @@ class DatabaseObserver:
     def _poll_db(self):
         while True:
             try:
-                for event in self._get_changes():
-                    self._channel.publish(event, None)
+                if self._force_update or self._has_changes():
+                    self._channel.publish(self._UPDATE_EVENT, None)
+                    self._force_update = False
             except Exception as e:
+                self._force_update = True
                 print(e)
             sleep(self.config.database_observer.refresh_interval)
 
-    def _get_changes(self):
-        new_state = self.source.get_all_changes(self.config.database_observer.check_interval)
-        new_state = dict(new_state)
-        diff = {
-            k for k, v in new_state.items()
-            if self._current_state.get(k, "New Value") != v
-        }
-        self._current_state |= new_state
-        return diff
+    def _has_changes(self):
+        last_change = self.source.get_last_change()
+        if not last_change:
+            return False
+        last_change = last_change.timestamp()
+        if last_change != self._last_change:
+            self._last_change = last_change
+            return True
+        return False

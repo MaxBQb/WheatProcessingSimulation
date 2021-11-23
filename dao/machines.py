@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from dao.base import DAO, OptionalQuery
 from dao.items import ItemsDAO
-from dao.live_query import live_query, tables
+from dao.live_query import live_query
 from mappers import table_to_model
 from model import Machine
 
@@ -26,10 +26,7 @@ class MachineFilterOptions(OptionalQuery):
 
 
 class MachinesDAO(ItemsDAO[Machine]):
-    @live_query(tables.machine,
-                tables.machine_type,
-                tables.machine_to_production_line,
-                tables.production_line)
+    @live_query
     def get_all(self, filter_options: MachineFilterOptions = None):
         where_clause, params = DAO.get_clause("WHERE", filter_options)
         with self._db.execute(
@@ -38,7 +35,7 @@ class MachinesDAO(ItemsDAO[Machine]):
         ) as cursor:
             return list(cursor)
 
-    @live_query(tables.machine, tables.machine_type)
+    @live_query
     def get_item(self, _id: int) -> Machine:
         with self._db.execute(
             "SELECT * FROM machine "
@@ -47,7 +44,7 @@ class MachinesDAO(ItemsDAO[Machine]):
         ) as cursor:
             return table_to_model(cursor.column_names, next(cursor, None), Machine)
 
-    @live_query(tables.machine)
+    @live_query
     def get_count(self) -> int:
         with self._db.execute(
             "SELECT COUNT(*) FROM machine"

@@ -1,19 +1,19 @@
 from dao.base import DAO
 from dao.items import ItemsDAO
-from dao.live_query import live_query, tables
+from dao.live_query import live_query
 from mappers import table_to_model
 from model import LegalEntity
 
 
 class LegalEntitiesDAO(ItemsDAO[LegalEntity]):
-    @live_query(tables.legal_entity)
+    @live_query
     def get_all(self, _=None):
         with self._db.execute(
             "SELECT * FROM view_legal_entity legal_entity"
         ) as cursor:
             return list(cursor)
 
-    @live_query(tables.legal_entity, tables.role)
+    @live_query
     def get_item(self, _id: int) -> LegalEntity:
         with self._db.execute(
             "SELECT * FROM legal_entity "
@@ -21,7 +21,7 @@ class LegalEntitiesDAO(ItemsDAO[LegalEntity]):
         ) as cursor:
             return table_to_model(cursor.column_names, next(cursor, None), LegalEntity)
 
-    @live_query(tables.legal_entity)
+    @live_query
     def get_count(self) -> int:
         with self._db.execute(
             "SELECT COUNT(*) FROM legal_entity"

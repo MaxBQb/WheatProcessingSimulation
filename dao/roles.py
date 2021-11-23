@@ -1,11 +1,8 @@
 from dao.base import DAO
 from dao.items import ItemsDAO
-import dao.live_query
+from dao.live_query import live_query
 from mappers import table_to_model
 from model import Role
-
-
-live_query = dao.live_query.live_query(dao.live_query.tables.role)
 
 
 class RolesDAO(ItemsDAO[Role]):

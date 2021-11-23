@@ -1,10 +1,8 @@
 from dao.base import DAO
 from typing import TypeVar, Generic
 from abc import ABC, abstractmethod
+from dao.live_query import live_query
 
-import dao.live_query
-
-live_query = dao.live_query.live_query()
 
 T = TypeVar('T')
 
