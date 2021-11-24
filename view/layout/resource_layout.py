@@ -21,14 +21,8 @@ def get_layout():
         [label("Тип ресурса")],
         [utils.center(choice_list(choice_list_type, height=5))],
         [sg.pin(sg.Column([
-            [label("Стекловидность"),
-             sg.Slider((0, 100),
-                       orientation='horizontal',
-                       key=slider_vitreousness)],
-            [label("Загрязнённость"),
-             sg.Slider((0, 100),
-                       orientation='horizontal',
-                       key=slider_contamination)],
+            [label("Стекловидность"), slider(0, 100, key=slider_vitreousness)],
+            [label("Загрязнённость"), slider(0, 100, key=slider_contamination)],
         ], key=section_wheat, visible=False))],
         [sg.pin(sg.Column([
             [label("Помол отрубей")],

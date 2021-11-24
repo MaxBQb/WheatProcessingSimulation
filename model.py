@@ -12,13 +12,14 @@ class LegalEntity:
 
 @dataclass
 class Contract:
-    id: int
+    id: int = -1
     legal_entity_id: int = None
     creation_time: datetime = None
     deadline_time: datetime = None
     is_finished: bool = None
     is_violated: bool = None
     price: float = None
+    resources: list[int] = None
 
 
 @dataclass

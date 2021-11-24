@@ -52,7 +52,8 @@ def make_scrollable(layout):
                        scrollable=True,
                        vertical_scroll_only=True,
                        key=SCROLLABLE_WINDOW,
-                       expand_x=True)]]
+                       expand_x=True,
+                       expand_y=True)]]
 
 
 def layout_from_fields(fields, base_key="-INPUT-", content_kwargs={}):

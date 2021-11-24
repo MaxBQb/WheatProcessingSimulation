@@ -1,5 +1,6 @@
 import view.base as base
 from view import utils
+from view.contracts import ContractsView
 from view.flour_grades import FlourGradesView
 from view.grinding_grades import GrindingGradesView
 from view.layout import main_menu_layout as layout
@@ -31,6 +32,7 @@ class MainMenuView(base.BaseInteractiveWindow):
             (layout.button_resource_types, ResourceTypesView),
             (layout.button_production_lines, ProductionLinesView),
             (layout.button_resources, ResourcesView),
+            (layout.button_contracts, ContractsView),
         )
 
     def build_layout(self):
@@ -49,11 +51,6 @@ class MainMenuView(base.BaseInteractiveWindow):
     def go_to(self, window):
         return window()
 
-    def dynamic_build(self):
-        super().dynamic_build()
-        for _id, _ in self._ways:
-            self.window[_id].update(button_color='#555')
-
     def close(self):
         super().close()
         self.window_manager.close()
@@ -65,5 +62,5 @@ class MainMenuView(base.BaseInteractiveWindow):
 
     def mark(self, context: base.Context):
         for _id, _ in self._ways:
-            self.window[_id].update(button_color="#555")
-        context.element.update(button_color='#666')
+            self.window[_id].update(button_color="#313641")
+        context.element.update(button_color='#555')

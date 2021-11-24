@@ -145,7 +145,7 @@ class AddResourceView(AddItemView[Resource]):
         item.grinding_grade_id = self.grinding_grades.cell(0, row, None)
 
         item.vitreousness = values.get(layout.slider_vitreousness, None)
-        item.contamination = values.get(layout.slider_vitreousness, None)
+        item.contamination = values.get(layout.slider_contamination, None)
         return item
 
 

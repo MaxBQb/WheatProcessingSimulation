@@ -13,6 +13,16 @@ def label(text: str):
     return sg.Text(f"{text}: ")
 
 
+def slider(min_v: int, max_v: int, key: Hashable, tick=20):
+    return sg.Slider(
+        (min_v, max_v),
+        orientation='horizontal',
+        key=key,
+        resolution=1,
+        tick_interval=tick
+    )
+
+
 def input_elem(key: Hashable):
     return sg.Input(**const.INPUT_DEFAULTS, key=key, enable_events=True)
 
@@ -48,10 +58,11 @@ def choice_list(key: Hashable,
     )
 
 
-def check_box(text: str, key: Hashable):
+def check_box(text: str, key: Hashable, visible=True):
     return sg.Checkbox(
         text,
         enable_events=True,
+        visible=visible,
         font=(DEFAULT_FONT[0], DEFAULT_FONT[1]+2),
         key=key,
     )

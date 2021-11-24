@@ -6,7 +6,7 @@ from logic.grinding_grades import GrindingGradesController
 from logic.items import ItemsController
 from logic.resource_types import ResourceTypesController
 from logic.table import Table
-from model import Resource, ProductionLine
+from model import Resource, ProductionLine, Contract
 
 
 class ResourcesController(ItemsController[Resource]):
@@ -83,4 +83,9 @@ class ResourcesController(ItemsController[Resource]):
     def get_resources_by_production_line(self, production_line: ProductionLine):
         return self.source.get_resources_by_production_line(
             production_line.id
+        )
+
+    def get_products_by_contract(self, contract: Contract):
+        return self.source.get_products_by_contract(
+            contract.id
         )

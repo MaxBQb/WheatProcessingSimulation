@@ -54,6 +54,16 @@ class ResourcesDAO(ItemsDAO[Resource]):
             return list(cursor)
 
     @live_query
+    def get_products_by_contract(self, _id: int):
+        with self._db.execute("""
+            SELECT r.ResourceId, ResourceTypeName, Comment FROM contract 
+            INNER JOIN resource r on contract.ContractId = r.ContractId
+            INNER JOIN view_resource vr on r.ResourceId = vr.ResourceId
+            WHERE contract.ContractId = %s
+        """, _id) as cursor:
+            return list(cursor)
+
+    @live_query
     def get_resources_by_production_line(self, _id: int):
         with self._db.execute("""
             SELECT r.ResourceId, ResourceTypeName, Comment FROM production_line 
