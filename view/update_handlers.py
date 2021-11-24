@@ -1,6 +1,9 @@
 from typing import Union, Callable
 
 import PySimpleGUI as sg
+
+from logic.table import Table
+from view import utils
 from view.base import Context, with_element
 from view.utils import max_len
 
@@ -22,8 +25,17 @@ def make_text_update_handler(text_format: Union[str, Callable[[str], str]] = "{}
 def update_listbox(element: sg.Listbox, values: list, selected: list[int] = None):
     if selected is None:
         selected = []
+    disabled = element.Disabled
+    element.update(disabled=False)
     element.update(values=values, set_to_index=selected)
-    element.set_size((max_len(values)+1, element.Size[1]))
+    element.update(disabled=disabled)
+    element.set_size((max(max_len(values), 24)+1, element.Size[1]))
+
+
+def update_listbox_advanced(element: sg.Listbox, old: Table, new: Table) -> Table :
+    selected = utils.get_new_selection(old, new, element.get_indexes())
+    update_listbox(element, list(new.column(1)), selected)
+    return new
 
 
 def restrict_length(limit: int):

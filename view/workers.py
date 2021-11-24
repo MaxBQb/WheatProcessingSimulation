@@ -3,7 +3,6 @@ import inject
 
 import view.utils
 from dao.base import OptionalQuery
-from dao.workers import WorkerFilterOptions
 from logic.table import Table
 from logic.workers import WorkersController
 from model import Worker

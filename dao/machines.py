@@ -47,6 +47,17 @@ class MachinesDAO(ItemsDAO[Machine]):
             return table_to_model(cursor.column_names, next(cursor, None), Machine)
 
     @live_query
+    def get_by_production_line(self, _id: int):
+        with self._db.execute("""
+            SELECT m.MachineId, MachineTypeName FROM production_line 
+            INNER JOIN machine_to_production_line mtpl on production_line.ProductionLineId = mtpl.ProductionLineId
+            INNER JOIN machine m on mtpl.MachineId = m.MachineId
+            INNER JOIN machine_type mt on m.MachineTypeId = mt.MachineTypeId
+            WHERE production_line.ProductionLineId = %s
+        """, _id) as cursor:
+            return list(cursor)
+
+    @live_query
     def get_count(self) -> int:
         with self._db.execute(
             "SELECT COUNT(*) FROM machine"
@@ -56,9 +67,9 @@ class MachinesDAO(ItemsDAO[Machine]):
     @DAO.check_success
     def add_item(self, item: Machine) -> int:
         with self._db.execute(
-            "insert into machine (MachineTypeId) "
-            "values (%s)",
-            item.type_id,
+            "insert into machine (MachineTypeId, IsPowered) "
+            "values (%s, %s)",
+            item.type_id, item.is_powered,
             commit_changes=True,
         ) as cursor:
             return cursor.lastrowid

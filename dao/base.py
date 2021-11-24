@@ -18,7 +18,8 @@ class DAO:
         def wrapper(*args, **kwargs):
             try:
                 return func(*args, **kwargs) or True
-            except Error:
+            except Error as e:
+                print(e)
                 return False
         return wrapper
 

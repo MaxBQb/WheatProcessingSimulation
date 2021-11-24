@@ -30,15 +30,19 @@ class Standard:
 
 @dataclass
 class ProductionLine:
-    id: int
+    id: int = -1
     standard_id: int = None
     production_start_time: datetime = None
     production_finish_time: datetime = None
+    resources: list[int] = None
+    results: list[int] = None
+    workers: list[int] = None
+    machines: list[int] = None
 
 
 @dataclass
 class Resource:
-    id: int
+    id: int = -1
     type_id: int = None
     type: str = None
     production_line_id: int = None

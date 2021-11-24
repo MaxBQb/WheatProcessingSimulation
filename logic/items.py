@@ -19,6 +19,9 @@ class ItemsController(ABC, Generic[T]):
     def validate(self, item: T) -> Optional[str]:
         pass
 
+    def validate_update(self, item: T) -> Optional[str]:
+        return self.validate(item)
+
     def get_item(self, _id: int):
         return self.source.get_item(_id)
 
@@ -30,7 +33,7 @@ class ItemsController(ABC, Generic[T]):
             return "Вставка данных не удалась"
 
     def update_item(self, item: T):
-        error = self.validate(item)
+        error = self.validate_update(item)
         if error:
             return error
         if not self.source.update_item(item):

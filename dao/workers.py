@@ -17,7 +17,7 @@ class WorkerFilterOptions(ItemFilterOptions):
         "RoleName",
     ]
 
-    def C(self):
+    def __post_init__(self):
         super().__post_init__()
         self._add_toggle("""
             worker.WorkerId NOT IN (
@@ -48,6 +48,17 @@ class WorkersDAO(ItemsDAO[Worker]):
             "WHERE WorkerId = %s", _id
         ) as cursor:
             return table_to_model(cursor.column_names, next(cursor, None), Worker)
+
+    @live_query
+    def get_by_production_line(self, _id: int):
+        with self._db.execute("""
+            SELECT w.WorkerId, WorkerName, RoleName FROM production_line 
+            INNER JOIN worker_to_production_line wtpl on production_line.ProductionLineId = wtpl.ProductionLineId
+            INNER JOIN worker w on wtpl.WorkerId = w.WorkerId
+            INNER JOIN role r on w.RoleId = r.RoleId
+            WHERE production_line.ProductionLineId = %s
+        """, _id) as cursor:
+            return list(cursor)
 
     @live_query
     def get_chief_candidates(self, worker: Worker):

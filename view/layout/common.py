@@ -36,13 +36,14 @@ def button(text: str, key: Hashable, **kwargs):
 def choice_list(key: Hashable,
                 length=50,
                 select_mode=sg.SELECT_MODE_BROWSE,
-                height=3):
+                height=3, disabled=False):
     return sg.Listbox(
         [],
         **const.LIST_BOX_DEFAULTS,
         select_mode=select_mode,
         size=(length, height),
-        enable_events=True,
+        enable_events=not disabled,
+        disabled=disabled,
         key=key,
     )
 

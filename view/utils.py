@@ -44,6 +44,17 @@ def center(*elements, **kwargs):
                      justification='center', **kwargs)
 
 
+SCROLLABLE_WINDOW = 'SCROLLABLE_WINDOW'
+
+
+def make_scrollable(layout):
+    return [[sg.Column(layout,
+                       scrollable=True,
+                       vertical_scroll_only=True,
+                       key=SCROLLABLE_WINDOW,
+                       expand_x=True)]]
+
+
 def layout_from_fields(fields, base_key="-INPUT-", content_kwargs={}):
     description = dict(fields)
     size = (max_len(description.keys()) + 1, 1)
@@ -74,7 +85,10 @@ def layout_from_fields(fields, base_key="-INPUT-", content_kwargs={}):
 
 
 def max_len(iterable):
-    return len(max(iterable, key=len))
+    try:
+        return len(max(iterable, key=len))
+    except ValueError:
+        return 0
 
 
 def first(array, default=None):
@@ -111,5 +125,9 @@ def get_new_selection(old: Table, new: Table, selected_rows: list[int], primary_
             old.cell(primary_column, selected_row)
         )
         for selected_row in selected_rows
-        if old.cell(0, selected_row, None) in new.column(primary_column)
+        if old.cell(primary_column, selected_row, None) in new.column(primary_column)
     ]
+
+
+def get_selected(table: Table, selected: list[int], primary=0):
+    return (table.cell(primary, row) for row in selected)

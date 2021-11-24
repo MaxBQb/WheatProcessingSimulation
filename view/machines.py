@@ -10,7 +10,7 @@ from model import Machine
 from view import utils as utils, base as base
 from view.items import ItemsView, AddItemView, T, EditItemView
 from view.layout import machines_controls as control_panel_layout, machine_layout as layout
-from view.update_handlers import update_listbox
+from view.update_handlers import update_listbox, update_listbox_advanced
 
 
 class MachinesView(ItemsView[Machine]):
@@ -85,9 +85,7 @@ class AddMachineView(AddItemView[Machine]):
 
     def update_types_list(self, element: sg.Listbox,
                           context: base.Context):
-        selected = utils.get_new_selection(self.machine_types, context.value, element.get_indexes())
-        self.machine_types: Table = context.value
-        update_listbox(element, list(self.machine_types.column(1)), selected)
+        self.machine_types = update_listbox_advanced(element, self.machine_types, context.value)
 
     def build_item(self, context: base.Context) -> T:
         item, values = self.item, context.values
